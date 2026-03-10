@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+
+# Next.js build output
+.next
+out
+
+# Git and other version control
+.git
+.gitignore
+
+# Environment files
+.env
+.env*.local
+
+# Editor/OS files
+.vscode
+.idea
+.DS_Store
+
+# Other ignored files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Exclude the Dockerfile itself and any scripts/results not needed for the final image
+Dockerfile
+*Dockerfile*
+scripts
+.results

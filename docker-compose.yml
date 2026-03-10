@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  auth-service:
+    build:
+      context: ./linkedin-auth_server
+    container_name: auth-service
+    restart: always
+    volumes:
+      - ./linkedin-auth_server:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: auth_db
+
+  post-service:
+    build:
+      context: ./linkedin-post_server
+    container_name: post-service
+    restart: always
+    volumes:
+      - ./linkedin-post_server:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    ports:
+      - "6000:6000"
+    environment:
+      PORT: 6000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: post_db
+      
+
+  linkedin-client:
+    build:
+      context: ./linkedin-client
+    container_name: linkedin-client
+    restart: always
+    volumes:
+      - ./linkedin-client:/app
+      - /app/node_modules
+    depends_on:
+      - auth-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./linkedin-client/.env
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
