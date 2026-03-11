@@ -45,15 +45,14 @@ services:
     depends_on:
       - postgres
     ports:
-      - "6000:6000"
+      - "3001:3001"
     environment:
-      PORT: 6000
+      PORT: 3001
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: post_db
-      
 
   linkedin-client:
     build:

@@ -62,10 +62,10 @@ export const signInWithFirebaseToken = createAsyncThunk(
 
 export const userProfileCreate = createAsyncThunk(
   "user/profile",
-  async (profileName: string, { rejectWithValue }) => {
-    console.log(profileName, "dtaa in user profile create");
+  async (profileData: any, { rejectWithValue }) => {
+    console.log(profileData, "dtaa in user profile create");
     try {
-      return await userProfile(profileName);
+      return await userProfile(profileData);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

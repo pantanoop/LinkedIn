@@ -1,19 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RegisterUserModule } from './features/register_user/register_user.module';
+import { AuthModule } from './features/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
-import { LoginUserModule } from './features/login_user/login_user.module';
-import { UserProfileCreateModule } from './features/userProfile_create/userProfile_create.module';
+import { UserModule } from './features/user/user.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
-    RegisterUserModule,
-    LoginUserModule,
-    UserProfileCreateModule,
-  ],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig), AuthModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })

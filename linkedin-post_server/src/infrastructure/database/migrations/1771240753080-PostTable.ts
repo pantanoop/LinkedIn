@@ -17,11 +17,20 @@ export class PostTable1771240753080 implements MigrationInterface {
             name: 'postId',
             type: 'uuid',
             isNullable: false,
+            isUnique: true,
           },
           {
             name: 'userid',
             type: 'varchar',
             isNullable: false,
+          },
+          {
+            name: 'userName',
+            type: 'varchar',
+          },
+          {
+            name: 'userTitle',
+            type: 'varchar',
           },
           {
             name: 'description',
@@ -34,9 +43,19 @@ export class PostTable1771240753080 implements MigrationInterface {
             isNullable: true,
           },
           {
+            name: 'profileUrl',
+            type: 'text',
+            isNullable: true,
+          },
+          {
             name: 'postType',
             type: 'varchar',
             isNullable: false,
+          },
+          {
+            name: 'postedOn',
+            type: 'timestamp',
+            default: 'now()',
           },
         ],
       }),

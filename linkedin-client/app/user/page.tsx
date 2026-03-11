@@ -55,9 +55,13 @@ export default function CompleteProfile() {
 
   const handleUserData = async (data: UserFormData) => {
     const profileName = `${data.first_name} ${data.last_name}`;
+    const profileData = {
+      userid: currentUser?.userid,
+      profileName: profileName,
+    };
 
     try {
-      await dispatch(userProfileCreate(profileName)).unwrap();
+      await dispatch(userProfileCreate(profileData)).unwrap();
     } catch (error: any) {
       console.error("Profile creation failed:", error);
     }

@@ -38,12 +38,12 @@ export const signInWithToken = async (idToken: string) => {
   return res.json();
 };
 
-export const userProfile = async (profileName: string) => {
+export const userProfile = async (profileData: any) => {
   const res = await fetch(`${API_BASE_URL}/user/createProfile`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ profileName }),
+    body: JSON.stringify(profileData),
   });
   return res.json();
 };

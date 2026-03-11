@@ -1,7 +1,7 @@
 "use client";
 
 import "./home.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Box, Paper, Avatar, Button, Typography, Stack } from "@mui/material";
 
@@ -11,9 +11,17 @@ import ArticleIcon from "@mui/icons-material/Article";
 import AddIcon from "@mui/icons-material/Add";
 import PostModal from "../PostModal/postModal";
 import PostCard from "../PostCard/PostCard";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
+import { clearPosts, fetchPosts } from "../../redux/post/postSlice";
 
 export default function Home() {
   const [openPostModal, setOpenPostModal] = useState(false);
+  const dispatch = useAppDispatch();
+  const { posts, loading } = useAppSelector((state) => state.post);
+  useEffect(() => {
+    dispatch(clearPosts());
+    dispatch(fetchPosts());
+  }, [dispatch]);
   return (
     <Box>
       <Paper elevation={1} className="start-post-card">
@@ -138,19 +146,25 @@ export default function Home() {
 
         <Typography className="show-more">Show more →</Typography>
       </Paper>
-      <PostCard
-        author="Jane Doe"
-        title="Software Engineer at Tech Corp"
-        time="2h"
-        content="Excited to share that I've just completed a new project using Next.js! The journey has been amazing and I learned a lot about server components and layouts."
-      />
-      <PostCard
-        author="Jane Doe"
-        title="Software Engineer at Tech Corp"
-        time="2h"
-        content="Excited to share that I've just completed a new project using Next.js! The journey has been amazing and I learned a lot about server components and layouts."
-      />
-      <Box id="feed-posts-container" />
+
+      <Box id="feed-posts-container">
+        {loading && <Typography>Loading posts...</Typography>}
+
+        {posts.map((post) => (
+          <PostCard
+            key={post.postId}
+            postId={post.postId}
+            author={post.userName}
+            title={post.userTitle}
+            time="Just now"
+            content={post.description}
+            imageUrls={post.imageUrls}
+            avatar={post.profileUrl}
+            likeCount={post.likeCount}
+            likedByUser={post.likedByUser}
+          />
+        ))}
+      </Box>
     </Box>
   );
 }

@@ -1,12 +1,17 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { addUserPost, getUsers } from "./postService";
+import { addUserPost, getPosts, toggleLikePost } from "./postService";
 
 export type Post = {
   postId: string;
   userid: string;
+  userName: string;
+  userTitle: string;
+  profileUrl: string;
   description: string;
   imageUrls: string[];
   postType: string;
+  likeCount?: number;
+  likedByUser?: boolean;
 };
 
 export type PostState = {
@@ -29,8 +34,7 @@ const initialState: PostState = {
 
 export const addPost = createAsyncThunk(
   "user/posts/add",
-  async (data: any, { rejectWithValue }) => {
-    console.log(data, "dtaa in user profile create");
+  async (data: FormData, { rejectWithValue }) => {
     try {
       return await addUserPost(data);
     } catch (error: any) {
@@ -39,14 +43,24 @@ export const addPost = createAsyncThunk(
   },
 );
 
-export const fetchUsers = createAsyncThunk(
-  "auth/fetchUsers",
-  async (
-    { page, limit }: { page: number; limit: number },
-    { rejectWithValue },
-  ) => {
+export const fetchPosts = createAsyncThunk(
+  "auth/fetchPosts",
+  async (_, { rejectWithValue }) => {
+    console.log("hitted service fetch users");
     try {
-      return await getUsers({ page, limit });
+      return await getPosts();
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
+export const toggleLike = createAsyncThunk(
+  "posts/toggleLike",
+  async (postId: string, { rejectWithValue }) => {
+    try {
+      const res = await toggleLikePost(postId);
+      return { postId, liked: res.liked };
     } catch (err: any) {
       return rejectWithValue(err.message);
     }
@@ -77,6 +91,32 @@ const postSlice = createSlice({
       .addCase(addPost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchPosts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        console.log(action.payload, "userse ");
+        state.loading = false;
+        state.posts = action.payload;
+      })
+      .addCase(fetchPosts.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(toggleLike.fulfilled, (state, action) => {
+        const { postId, liked } = action.payload;
+
+        const post = state.posts.find((p) => p.postId === postId);
+
+        if (post) {
+          post.likedByUser = liked;
+
+          if (liked) {
+            post.likeCount = (post.likeCount || 0) + 1;
+          } else {
+            post.likeCount = Math.max((post.likeCount || 1) - 1, 0);
+          }
+        }
       });
   },
 });

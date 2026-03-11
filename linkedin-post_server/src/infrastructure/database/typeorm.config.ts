@@ -1,6 +1,7 @@
 import { DataSourceOptions } from 'typeorm';
 
 import { Post } from '../../domain/entities/post.entity';
+import { Like } from '../../domain/entities/like.entity';
 
 import * as dotenv from 'dotenv';
 import { join } from 'path';
@@ -15,7 +16,7 @@ export const typeOrmConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [Post],
+  entities: [Post, Like],
   migrations: [join(__dirname, 'migrations', '*.ts')],
   synchronize: false,
 };

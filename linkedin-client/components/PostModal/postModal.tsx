@@ -20,7 +20,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useAppDispatch } from "../../redux/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 
 import { addPost } from "../../redux/post/postSlice";
 
@@ -40,7 +40,7 @@ type PostFormData = z.infer<typeof PostSchema>;
 
 export default function PostModal({ open, onClose }: PostModalProps) {
   const dispatch = useAppDispatch();
-
+  const { currentUser } = useAppSelector((state) => state.authenticator);
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -86,8 +86,15 @@ export default function PostModal({ open, onClose }: PostModalProps) {
   };
 
   const handlePost = async (data: PostFormData) => {
+    if (!currentUser) return;
+    console.log(currentUser.userid);
     try {
       const formData = new FormData();
+
+      formData.append("userid", currentUser.userid);
+      formData.append("userName", currentUser?.profileName ?? "Anonymous User");
+      formData.append("userTitle", "Software Engineer at Tech Corp");
+      formData.append("profileUrl", "https://i.pravatar.cc/150?img=12");
 
       formData.append("description", data.content);
       formData.append("postType", "post");
@@ -95,6 +102,10 @@ export default function PostModal({ open, onClose }: PostModalProps) {
       selectedImages.forEach((file) => {
         formData.append("images", file);
       });
+
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
 
       await dispatch(addPost(formData)).unwrap();
 
@@ -154,7 +165,6 @@ export default function PostModal({ open, onClose }: PostModalProps) {
               ))}
             </div>
           )}
-
 
           <div className="postTools">
             <div className="toolLeft">
