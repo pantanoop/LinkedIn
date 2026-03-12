@@ -6,12 +6,14 @@ import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { PostModule } from './features/post/post.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikeModule } from './features/likes/like.module';
+import { CommentModule } from './features/comments/comment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     PostModule,
     LikeModule,
+    CommentModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'supersecret',
     }),

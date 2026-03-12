@@ -57,9 +57,12 @@ export const fetchPosts = createAsyncThunk(
 
 export const toggleLike = createAsyncThunk(
   "posts/toggleLike",
-  async (postId: string, { rejectWithValue }) => {
+  async (
+    { postId, userId }: { postId: string; userId: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const res = await toggleLikePost(postId);
+      const res = await toggleLikePost(postId, userId);
       return { postId, liked: res.liked };
     } catch (err: any) {
       return rejectWithValue(err.message);

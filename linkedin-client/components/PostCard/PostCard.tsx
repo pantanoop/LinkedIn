@@ -1,12 +1,16 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
+
 import "./postcard.css";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import SendIcon from "@mui/icons-material/Send";
-import { useAppDispatch } from "../../redux/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { toggleLike } from "../../redux/post/postSlice";
+import CommentSection from "../Comments/CommentSection/CommentSection";
 type PostCardProps = {
   postId: string;
   author: string;
@@ -17,6 +21,7 @@ type PostCardProps = {
   imageUrls?: string[];
   likeCount?: number;
   likedByUser?: boolean;
+  userId: string;
 };
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -29,8 +34,15 @@ const PostCard: React.FC<PostCardProps> = ({
   imageUrls = [],
   likeCount,
   likedByUser,
+  userId,
 }) => {
   const dispatch = useAppDispatch();
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
+  const [showComments, setShowComments] = useState(false);
+
+  function handleLike(postId: string) {
+    dispatch(toggleLike({ postId, userId: currentUser.userid }));
+  }
   return (
     <div className="dashboard-post">
       <div className="post-header">
@@ -70,18 +82,19 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       <div className="post-actions">
-        <button
-          className="action-btn"
-          onClick={() => dispatch(toggleLike(postId))}
-        >
-          <ThumbUpOffAltIcon
-            className="action-icon"
-            style={{ color: likedByUser ? "#0a66c2" : "" }}
-          />
+        <button className="action-btn" onClick={() => handleLike(postId)}>
+          {likedByUser ? (
+            <ThumbUpIcon className="action-icon" sx={{ color: "#0a66c2" }} />
+          ) : (
+            <ThumbUpOffAltIcon className="action-icon" />
+          )}
           <span>{likeCount || 0} Like</span>
         </button>
 
-        <button className="action-btn">
+        <button
+          className="action-btn"
+          onClick={() => setShowComments(!showComments)}
+        >
           <ChatBubbleOutlineIcon className="action-icon" />
           <span>Comment</span>
         </button>
@@ -96,6 +109,11 @@ const PostCard: React.FC<PostCardProps> = ({
           <span>Send</span>
         </button>
       </div>
+      {showComments && (
+        <div className="post-comments-wrapper">
+          <CommentSection postId={postId} />
+        </div>
+      )}
     </div>
   );
 };

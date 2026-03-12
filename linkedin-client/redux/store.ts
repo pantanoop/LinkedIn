@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/authSlice";
 import postReducer from "./post/postSlice";
+import commentReducer from "./comments/commentSlice";
 
 import {
   persistStore,
@@ -25,6 +26,7 @@ const persistedReducer = persistReducer(
   combineReducers({
     authenticator: authReducer,
     post: postReducer,
+    comments: commentReducer,
   }),
 );
 

@@ -1,0 +1,41 @@
+.comment-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-input-box {
+  flex: 1;
+  border: 1px solid #d6d6d6;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.comment-input-box:focus {
+  border-color: #0a66c2;
+}
+
+.comment-submit-btn {
+  border: none;
+  background: #0a66c2;
+  color: white;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.comment-submit-btn:hover {
+  background: #004182;
+}

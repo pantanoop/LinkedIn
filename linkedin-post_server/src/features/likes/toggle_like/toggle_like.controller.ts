@@ -7,7 +7,7 @@ export class ToggleLikeController {
   constructor(private readonly toggleLikeService: ToggleLikeService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post(':postId/toggle-like')
+  @Post(':postId')
   async toggleLike(
     @Param('postId') postId: string,
     @Body('userId') userId: string,

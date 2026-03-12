@@ -77,6 +77,8 @@ export default function Login() {
         data.email,
         data.password,
       );
+      const idToken = await res.user.getIdToken(true);
+      dispatch(signInWithFirebaseToken({ idToken })).unwrap();
     } catch (error: any) {
       let message = "Login Failed";
       if (error.code === "auth/user-not-found") {

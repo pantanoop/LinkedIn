@@ -25,10 +25,14 @@ export const getPosts = async () => {
   return res.json();
 };
 
-export const toggleLikePost = async (postId: string) => {
-  const res = await fetch(`${API_BASE_URL}/posts/${postId}/toggle-like`, {
+export const toggleLikePost = async (postId: string, userId: string) => {
+  const res = await fetch(`${API_BASE_URL}/posts/like/${postId}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
   });
 
   if (!res.ok) {

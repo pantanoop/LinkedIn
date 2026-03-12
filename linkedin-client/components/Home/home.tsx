@@ -18,6 +18,7 @@ export default function Home() {
   const [openPostModal, setOpenPostModal] = useState(false);
   const dispatch = useAppDispatch();
   const { posts, loading } = useAppSelector((state) => state.post);
+  console.log("fff", posts);
   useEffect(() => {
     dispatch(clearPosts());
     dispatch(fetchPosts());
@@ -162,6 +163,7 @@ export default function Home() {
             avatar={post.profileUrl}
             likeCount={post.likeCount}
             likedByUser={post.likedByUser}
+            userId={post.userid}
           />
         ))}
       </Box>
