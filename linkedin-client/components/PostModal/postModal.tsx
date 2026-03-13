@@ -33,7 +33,7 @@ const PostSchema = z.object({
   content: z
     .string()
     .min(1, "Post cannot be empty")
-    .max(3000, "Post is too long"),
+    .max(300, "Post is too long"),
 });
 
 type PostFormData = z.infer<typeof PostSchema>;
@@ -43,7 +43,7 @@ export default function PostModal({ open, onClose }: PostModalProps) {
   const { currentUser } = useAppSelector((state) => state.authenticator);
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
   const [openEmoji, setOpenEmoji] = useState(false);
 
   const {
@@ -67,15 +67,15 @@ export default function PostModal({ open, onClose }: PostModalProps) {
     reset();
     setShowMoreTools(false);
     setPreviewUrls([]);
-    setSelectedImages([]);
+    setSelectedMedia([]);
   }
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files);
 
-    setSelectedImages(files);
+    setSelectedMedia(files);
 
     const previews = files.map((file) => URL.createObjectURL(file));
     setPreviewUrls(previews);
@@ -99,10 +99,9 @@ export default function PostModal({ open, onClose }: PostModalProps) {
       formData.append("description", data.content);
       formData.append("postType", "post");
 
-      selectedImages.forEach((file) => {
-        formData.append("images", file);
+      selectedMedia.forEach((file) => {
+        formData.append("files", file);
       });
-
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
@@ -160,9 +159,15 @@ export default function PostModal({ open, onClose }: PostModalProps) {
 
           {previewUrls.length > 0 && (
             <div className="image-preview">
-              {previewUrls.map((url, i) => (
-                <img key={i} src={url} alt="preview" />
-              ))}
+              {previewUrls.map((url, i) => {
+                const file = selectedMedia[i];
+
+                if (file.type.startsWith("video")) {
+                  return <video key={i} src={url} controls width="100%" />;
+                }
+
+                return <img key={i} src={url} alt="preview" />;
+              })}
             </div>
           )}
 
@@ -188,8 +193,8 @@ export default function PostModal({ open, onClose }: PostModalProps) {
                   hidden
                   multiple
                   type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
+                  accept="image/*,video/*"
+                  onChange={handleMediaChange}
                 />
               </label>
 

@@ -16,8 +16,8 @@ export class PostTable1771240753080 implements MigrationInterface {
           {
             name: 'postId',
             type: 'uuid',
-            isNullable: false,
             isUnique: true,
+            isNullable: false,
           },
           {
             name: 'userid',
@@ -43,7 +43,7 @@ export class PostTable1771240753080 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'profileUrl',
+            name: 'mediaUrls',
             type: 'text',
             isNullable: true,
           },

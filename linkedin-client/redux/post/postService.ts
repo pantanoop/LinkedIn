@@ -41,3 +41,22 @@ export const toggleLikePost = async (postId: string, userId: string) => {
 
   return res.json();
 };
+
+export const repostPost = async (postId: string, userName: string) => {
+  const res = await fetch(`${API_BASE_URL}/posts/repost/${postId}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userName,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to repost");
+  }
+
+  return res.json();
+};

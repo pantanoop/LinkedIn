@@ -24,12 +24,20 @@
   border-radius: 10px;
   max-width: 520px;
 } */
-
+/* 
 .comment-bubble {
   background: #f3f2ef;
   padding: 6px 10px;
   border-radius: 8px;
   max-width: 420px;
+} */
+.comment-bubble {
+  background: #f3f2ef;
+  padding: 6px 10px;
+  border-radius: 8px;
+  max-width: 420px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .comment-username {
@@ -37,9 +45,17 @@
   font-size: 14px;
 }
 
+/* .comment-text {
+  font-size: 14px;
+  margin-top: 3px;
+} */
+
 .comment-text {
   font-size: 14px;
   margin-top: 3px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .comment-actions {

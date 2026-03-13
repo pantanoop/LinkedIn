@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { addUserPost, getPosts, toggleLikePost } from "./postService";
+import {
+  addUserPost,
+  getPosts,
+  toggleLikePost,
+  repostPost,
+} from "./postService";
 
 export type Post = {
   postId: string;
@@ -8,10 +13,15 @@ export type Post = {
   userTitle: string;
   profileUrl: string;
   description: string;
-  imageUrls: string[];
+  mediaUrls: string[];
   postType: string;
-  likeCount?: number;
-  likedByUser?: boolean;
+  likeCount: number;
+  likedByUser: boolean;
+  postedOn: string;
+  type: "post" | "repost";
+  repostUser?: string;
+  repostUserId?: string;
+  repostedOn?: string;
 };
 
 export type PostState = {
@@ -70,6 +80,20 @@ export const toggleLike = createAsyncThunk(
   },
 );
 
+export const repost = createAsyncThunk(
+  "posts/repost",
+  async (
+    { postId, userName }: { postId: string; userName: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      return await repostPost(postId, userName);
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
 const postSlice = createSlice({
   name: "post",
   initialState,
@@ -98,28 +122,33 @@ const postSlice = createSlice({
       .addCase(fetchPosts.pending, (state) => {
         state.loading = true;
       })
+
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        console.log(action.payload, "userse ");
         state.loading = false;
         state.posts = action.payload;
       })
+
       .addCase(fetchPosts.rejected, (state) => {
         state.loading = false;
       })
       .addCase(toggleLike.fulfilled, (state, action) => {
         const { postId, liked } = action.payload;
 
-        const post = state.posts.find((p) => p.postId === postId);
+        state.posts.forEach((post) => {
+          if (post.postId === postId) {
+            post.likedByUser = liked;
 
-        if (post) {
-          post.likedByUser = liked;
-
-          if (liked) {
-            post.likeCount = (post.likeCount || 0) + 1;
-          } else {
-            post.likeCount = Math.max((post.likeCount || 1) - 1, 0);
+            if (liked) {
+              post.likeCount += 1;
+            } else {
+              post.likeCount = Math.max(post.likeCount - 1, 0);
+            }
           }
-        }
+        });
+      })
+      .addCase(repost.fulfilled, (state, action) => {
+        const newPost = action.payload;
+        state.posts.unshift(newPost);
       });
   },
 });

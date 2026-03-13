@@ -156,3 +156,12 @@
   border-top: 1px solid #e0e0e0;
   padding: 10px 0;
 }
+
+.repost-header {
+  margin:10px;
+  font-size: 14px;
+  font-weight:500;
+  color:black;
+  margin-bottom: 6px;
+  font-weight: 500;
+}

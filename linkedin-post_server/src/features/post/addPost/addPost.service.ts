@@ -12,7 +12,7 @@ export class AddPostService {
 
   async addPost(data: any, files: Express.Multer.File[]) {
     const { userid, description, userName, profileUrl, userTitle } = data;
-    const imageUrls =
+    const mediaUrls =
       files?.map((file) => `http://localhost:3001/uploads/${file.filename}`) ||
       [];
 
@@ -23,8 +23,8 @@ export class AddPostService {
       profileUrl,
       userTitle,
       description,
-      imageUrls,
-      postType: 'private',
+      mediaUrls,
+      postType: 'public',
     });
 
     await this.postRepo.save(newPost);

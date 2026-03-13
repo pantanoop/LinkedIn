@@ -4,7 +4,7 @@ import "./dashboard.css";
 import { Box } from "@mui/material";
 import Navbar from "../../components/Navbar/navbar";
 import LeftSidebar from "../../components/LeftSidebar/leftSidebar";
-import Home from "../../components/Home/home";
+import Home from "../../components/Home/Home";
 import RightSidebar from "../../components/RightSidebar/rightSidebar";
 import { useEffect } from "react";
 import { useAppSelector } from "../../redux/hooks/hooks";

@@ -1,5 +1,4 @@
 "use client";
-
 import "./home.css";
 import { useState, useEffect } from "react";
 
@@ -153,16 +152,22 @@ export default function Home() {
 
         {posts.map((post) => (
           <PostCard
-            key={post.postId}
+            key={
+              post.type === "repost"
+                ? post.postId + post.repostedOn
+                : post.postId
+            }
             postId={post.postId}
             author={post.userName}
             title={post.userTitle}
             time="Just now"
             content={post.description}
-            imageUrls={post.imageUrls}
+            mediaUrls={post.mediaUrls}
             avatar={post.profileUrl}
             likeCount={post.likeCount}
             likedByUser={post.likedByUser}
+            type={post.type}
+            repostUser={post.repostUser}
             userId={post.userid}
           />
         ))}

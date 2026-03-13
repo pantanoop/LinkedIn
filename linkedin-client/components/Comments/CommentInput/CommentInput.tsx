@@ -33,10 +33,10 @@ const CommentInput = ({ postId, parentId }: any) => {
       <input
         className="comment-input-box"
         value={text}
+        maxLength={500}
         onChange={(e) => setText(e.target.value)}
         placeholder="Add a comment..."
       />
-
       <button className="comment-submit-btn" onClick={submit}>
         Comment
       </button>

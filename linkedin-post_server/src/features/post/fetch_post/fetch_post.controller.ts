@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../infrastructure/auth_guard/jwt_auth_guard';
 import { FetchPostService } from './fetch_post.service';
 
@@ -8,7 +8,10 @@ export class FetchPostController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async get_posts() {
-    return await this.fetchPostService.get_posts();
+  async getPosts(@Req() req) {
+    const userId = req.user.sub;
+    console.log(userId);
+
+    return this.fetchPostService.get_posts(userId);
   }
 }

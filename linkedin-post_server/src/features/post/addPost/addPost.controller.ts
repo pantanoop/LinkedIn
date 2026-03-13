@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 
 import { AddPostService } from './addPost.service';
-import { FilesInterceptor } from '@nestjs/platform-express/multer/interceptors/files.interceptor';
-import { postImageStorage } from '../../../infrastructure/multer/multer.config';
 
+import { postMediaMulterConfig } from '../../../infrastructure/multer/multer.config';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../../infrastructure/auth_guard/jwt_auth_guard';
 
 @Controller('posts/add')
@@ -19,11 +19,7 @@ export class AddPostController {
 
   @UseGuards(JwtAuthGuard)
   @Post('')
-  @UseInterceptors(
-    FilesInterceptor('images', 5, {
-      storage: postImageStorage,
-    }),
-  )
+  @UseInterceptors(FilesInterceptor('files', 5, postMediaMulterConfig))
   async addPost(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() data: any,
