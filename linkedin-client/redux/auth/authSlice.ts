@@ -10,10 +10,19 @@ import {
 } from "./authService";
 
 export type User = {
+  id: number;
   userid: string;
   email: string | null;
   displayName?: string | null;
   profileName?: string | null;
+  userTitle?: string | null;
+  about?: string | null;
+  profileUrl?: string | null;
+  coverUrl?: string | null;
+  followersCount?: number;
+  followingCount?: number;
+  connectionsCount?: number;
+  createdAt?: string;
 };
 
 export type AuthState = {
@@ -133,6 +142,9 @@ const authenticateSlice = createSlice({
     addCurrentUser: (state, action: PayloadAction<User>) => {
       state.currentUser = action.payload;
     },
+    clearUsers: (state) => {
+      state.users = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -181,7 +193,10 @@ const authenticateSlice = createSlice({
       .addCase(userProfileCreate.fulfilled, (state, action) => {
         state.loading = false;
         if (state.currentUser) {
-          state.currentUser.profileName = action.payload.profileName;
+          state.currentUser = {
+            ...state.currentUser,
+            ...action.payload,
+          };
         }
       })
       .addCase(userProfileCreate.rejected, (state, action) => {
@@ -211,10 +226,11 @@ const authenticateSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        // console.log(action.payload.data);
+        console.log(action.payload, "in slic user");
         state.loading = false;
         state.users = action.payload.data;
         state.total = action.payload.total;
+        state.page = action.payload.page;
       })
       .addCase(fetchUsers.rejected, (state) => {
         state.loading = false;
@@ -222,5 +238,5 @@ const authenticateSlice = createSlice({
   },
 });
 
-export const { addCurrentUser, logout } = authenticateSlice.actions;
+export const { addCurrentUser, logout, clearUsers } = authenticateSlice.actions;
 export default authenticateSlice.reducer;

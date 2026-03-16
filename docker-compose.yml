@@ -54,6 +54,26 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: post_db
 
+  user-service:
+    build:
+      context: ./users
+    container_name: user-service
+    restart: always
+    volumes:
+      - ./users:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: user_db
+
   linkedin-client:
     build:
       context: ./linkedin-client

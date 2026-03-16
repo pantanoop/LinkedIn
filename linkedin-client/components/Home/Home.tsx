@@ -17,7 +17,6 @@ export default function Home() {
   const [openPostModal, setOpenPostModal] = useState(false);
   const dispatch = useAppDispatch();
   const { posts, loading } = useAppSelector((state) => state.post);
-  console.log("fff", posts);
   useEffect(() => {
     dispatch(clearPosts());
     dispatch(fetchPosts());
@@ -78,85 +77,19 @@ export default function Home() {
         </Stack>
       </Paper>
 
-      <Paper elevation={1} className="recommended-card">
-        <Typography className="recommended-title">
-          Recommended for you
-        </Typography>
-
-        <Stack direction="row" spacing={1.5} className="recommended-row">
-          <Avatar src="/profile.jpg" />
-
-          <Box className="recommended-info">
-            <Typography className="recommended-name">Amina Habib</Typography>
-            <Typography className="recommended-headline">
-              Entrepreneur | Women Impact Hub
-            </Typography>
-          </Box>
-
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className="follow-btn"
-          >
-            Follow
-          </Button>
-        </Stack>
-
-        <Stack direction="row" spacing={1.5} className="recommended-row">
-          <Avatar src="/profile.jpg" />
-
-          <Box className="recommended-info">
-            <Typography className="recommended-name">
-              Valentina Sander
-            </Typography>
-            <Typography className="recommended-headline">
-              Lic. en Psicología | Recruiter
-            </Typography>
-          </Box>
-
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className="follow-btn"
-          >
-            Follow
-          </Button>
-        </Stack>
-
-        <Stack direction="row" spacing={1.5} className="recommended-row">
-          <Avatar src="/profile.jpg" />
-
-          <Box className="recommended-info">
-            <Typography className="recommended-name">
-              Antonela Correa
-            </Typography>
-            <Typography className="recommended-headline">
-              HR at Bagley Argentina
-            </Typography>
-          </Box>
-
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className="follow-btn"
-          >
-            Follow
-          </Button>
-        </Stack>
-
-        <Typography className="show-more">Show more →</Typography>
-      </Paper>
-
+      {posts.length === 0 && (
+        <Paper elevation={1} className="recommended-card">
+          <Typography className="recommended-title">
+            No Posts to Display righnt now Add a post right away..
+          </Typography>
+        </Paper>
+      )}
       <Box id="feed-posts-container">
         {loading && <Typography>Loading posts...</Typography>}
 
-        {posts.map((post) => (
+        {posts.map((post, index) => (
           <PostCard
-            key={
-              post.type === "repost"
-                ? post.postId + post.repostedOn
-                : post.postId
-            }
+            key={`${post.postId}-${post.type}-${index}`}
             postId={post.postId}
             author={post.userName}
             title={post.userTitle}

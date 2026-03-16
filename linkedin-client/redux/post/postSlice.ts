@@ -46,6 +46,7 @@ export const addPost = createAsyncThunk(
   "user/posts/add",
   async (data: FormData, { rejectWithValue }) => {
     try {
+      console.log("formdata in thunk", data);
       return await addUserPost(data);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -56,7 +57,6 @@ export const addPost = createAsyncThunk(
 export const fetchPosts = createAsyncThunk(
   "auth/fetchPosts",
   async (_, { rejectWithValue }) => {
-    console.log("hitted service fetch users");
     try {
       return await getPosts();
     } catch (err: any) {

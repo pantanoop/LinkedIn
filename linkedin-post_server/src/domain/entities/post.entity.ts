@@ -25,9 +25,6 @@ export class Post {
   @Column('text', { nullable: true })
   profileUrl: string;
 
-  // @Column('text', { array: true, nullable: true })
-  // imageUrls: string[];
-
   @Column('text', { array: true, nullable: true })
   mediaUrls: string[];
 

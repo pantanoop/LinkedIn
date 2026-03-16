@@ -1,16 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-
 import "./postcard.css";
+
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import SendIcon from "@mui/icons-material/Send";
+
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
-import { toggleLike, repost } from "../../redux/post/postSlice";
+import { toggleLike, repost, fetchPosts } from "../../redux/post/postSlice";
+
 import CommentSection from "../Comments/CommentSection/CommentSection";
+
 type PostCardProps = {
   postId: string;
   author: string;
@@ -18,7 +21,7 @@ type PostCardProps = {
   time: string;
   content: string;
   avatar?: string;
-  mediaUrls?: string[];
+  mediaUrls?: string[] | string;
   likeCount?: number;
   likedByUser?: boolean;
   type?: "post" | "repost";
@@ -33,48 +36,78 @@ const PostCard: React.FC<PostCardProps> = ({
   time,
   content,
   avatar,
-  mediaUrls = [],
+  mediaUrls,
   likeCount,
   likedByUser,
   type,
   repostUser,
 }) => {
   const dispatch = useAppDispatch();
-
   const { currentUser } = useAppSelector((state: any) => state.authenticator);
+
   const [showComments, setShowComments] = useState(false);
+
+  const mediaArray: string[] = (() => {
+    if (Array.isArray(mediaUrls)) return mediaUrls;
+
+    if (typeof mediaUrls === "string") {
+      return mediaUrls
+        .replace(/[{}]/g, "")
+        .split(",")
+        .map((url) => url.replace(/"/g, "").trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  })();
+
+  const isVideoPost = mediaArray.some((url) => url.match(/\.(mp4|webm|mov)$/i));
 
   function handleLike(postId: string) {
     dispatch(toggleLike({ postId, userId: currentUser.userid }));
   }
+
   function handleRepost(postId: string) {
     dispatch(
       repost({
         postId,
         userName: currentUser.profileName,
       }),
-    );
+    ).then(() => {
+      dispatch(fetchPosts());
+    });
   }
-  const renderMedia = (url: string, index: number) => {
-    const isVideo =
-      url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov");
 
-    if (isVideo) {
-      return <video key={index} src={url} controls className="post-video" />;
+  const renderMedia = () => {
+    if (isVideoPost) {
+      return (
+        <div className="post-video-wrapper">
+          <video src={mediaArray[0]} controls className="post-video" />
+        </div>
+      );
     }
-
-    return <img key={index} src={url} alt="post media" />;
+    if (mediaArray.length === 1) {
+      return (
+        <div className="post-single-image">
+          <img src={mediaArray[0]} alt="post media" />
+        </div>
+      );
+    }
+    return (
+      <div className="post-masonry">
+        {mediaArray.map((url, index) => (
+          <img
+            key={url + index}
+            src={url}
+            alt="post media"
+            loading="lazy"
+            className="post-masonry-img"
+          />
+        ))}
+      </div>
+    );
   };
 
-  //   const renderMedia = (url: string, index: number) => {
-  //   if (url.match(/\.(mp4|webm|mov)$/i)) {
-  //     return (
-  //       <video key={index} src={url} controls className="post-video" />
-  //     );
-  //   }
-
-  //   return <img key={index} src={url} alt="post media" />;
-  // };
   return (
     <div className="dashboard-post">
       {type === "repost" && (
@@ -82,14 +115,14 @@ const PostCard: React.FC<PostCardProps> = ({
           <strong>{repostUser}</strong> reposted this
         </div>
       )}
+
       <div className="post-header">
         <div className="post-avatar">
-          <img src={avatar} alt="avatar" />
+          {avatar && <img src={avatar} alt="avatar" />}
         </div>
 
         <div className="post-info">
           <h2 className="post-author">{author}</h2>
-
           <p className="post-title">{title}</p>
           <p className="post-time">{time} • 🌍</p>
         </div>
@@ -99,15 +132,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <p>{content}</p>
       </div>
 
-      {mediaUrls.length > 0 && (
-        <div
-          className={`post-media ${
-            mediaUrls.length === 1 ? "single-media" : "multi-media"
-          }`}
-        >
-          {mediaUrls.map((url, index) => renderMedia(url, index))}
-        </div>
-      )}
+      {mediaArray.length > 0 && renderMedia()}
 
       <div className="post-actions">
         <button className="action-btn" onClick={() => handleLike(postId)}>
@@ -137,6 +162,7 @@ const PostCard: React.FC<PostCardProps> = ({
           <span>Send</span>
         </button>
       </div>
+
       {showComments && (
         <div className="post-comments-wrapper">
           <CommentSection postId={postId} />

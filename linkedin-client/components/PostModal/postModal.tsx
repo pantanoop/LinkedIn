@@ -89,6 +89,7 @@ export default function PostModal({ open, onClose }: PostModalProps) {
     if (!currentUser) return;
     console.log(currentUser.userid);
     try {
+      console.log("post hitted in component");
       const formData = new FormData();
 
       formData.append("userid", currentUser.userid);
@@ -105,7 +106,7 @@ export default function PostModal({ open, onClose }: PostModalProps) {
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
-
+      console.log("formdata in com", formData);
       await dispatch(addPost(formData)).unwrap();
 
       handleClose();

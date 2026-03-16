@@ -48,15 +48,6 @@ export default function SignUp() {
     (state) => state.authenticator,
   );
   console.log(currentUser, "CURRENT USER");
-  useEffect(() => {
-    if (currentUser) {
-      const timer = setTimeout(() => {
-        router.push("/user");
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentUser, router]);
   const {
     control,
     handleSubmit,

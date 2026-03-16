@@ -1,5 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-// const API_BASE_URL = `http://localhost:5000`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL_USER;
 
 export const findUser = async (credentials: any) => {
   console.log(credentials);
@@ -39,7 +39,7 @@ export const signInWithToken = async (idToken: string) => {
 };
 
 export const userProfile = async (profileData: any) => {
-  const res = await fetch(`${API_BASE_URL}/user/createProfile`, {
+  const res = await fetch(`${API_URL}/user/createProfile`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -71,7 +71,10 @@ export const getUsers = async ({
   limit: number;
 }) => {
   const res = await fetch(
-    `${API_BASE_URL}/auth/users?page=${page}&limit=${limit}`,
+    `${API_URL}/users/fetch?page=${page}&limit=${limit}`,
+    {
+      credentials: "include",
+    },
   );
 
   if (!res.ok) {

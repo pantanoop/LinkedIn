@@ -12,27 +12,6 @@ export class FetchPostService {
     @InjectRepository(Repost)
     private readonly repostRepo: Repository<Repost>,
   ) {}
-  // async get_posts() {
-  //   const posts = await this.postRepo
-  //     .createQueryBuilder('post')
-  //     .leftJoin('post.likes', 'like')
-  //     .loadRelationCountAndMap('post.likeCount', 'post.likes')
-  //     .orderBy('post.postedOn', 'DESC')
-  //     .getMany();
-  //   return posts;
-  // }
-
-  // async get_posts() {
-  //   const posts = await this.postRepo
-  //     .createQueryBuilder('post')
-  //     .leftJoinAndSelect('post.likes', 'like') // IMPORTANT
-  //     .loadRelationCountAndMap('post.likeCount', 'post.likes')
-  //     .orderBy('post.postedOn', 'DESC')
-  //     .getMany();
-
-  //   return posts;
-  // }
-
   async get_posts(userId: string) {
     const posts = await this.postRepo
       .createQueryBuilder('post')

@@ -47,15 +47,6 @@ export default function Login() {
     (state) => state.authenticator,
   );
 
-  useEffect(() => {
-    if (currentUser) {
-      const timer = setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentUser, router]);
   console.log(currentUser, "CURRENT USER");
   const {
     control,

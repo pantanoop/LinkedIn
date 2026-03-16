@@ -37,9 +37,8 @@ export class PostTable1771240753080 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'imageUrls',
+            name: 'profileUrl',
             type: 'text',
-            isArray: true,
             isNullable: true,
           },
           {

@@ -48,7 +48,7 @@ export default function Navbar() {
           <div
             className="li-logo"
             style={{ cursor: "pointer" }}
-            onClick={() => router.push("/feed")}
+            onClick={() => router.push("/dashboard")}
           >
             in
           </div>
@@ -68,7 +68,7 @@ export default function Navbar() {
           </div>
 
           <div className="li-nav-item">
-            <IconButton size="small" onClick={() => router.push("/networks")}>
+            <IconButton size="small" onClick={() => router.push("/network")}>
               <GroupIcon />
             </IconButton>
             <span>My Network</span>

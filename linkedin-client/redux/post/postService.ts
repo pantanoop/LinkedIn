@@ -2,6 +2,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL_POST;
 // const API_BASE_URL = `http://localhost:6000`;
 
 export const addUserPost = async (data: FormData) => {
+  console.log("formdata in service", data);
   const res = await fetch(`${API_BASE_URL}/posts/add`, {
     method: "POST",
     credentials: "include",
@@ -12,7 +13,6 @@ export const addUserPost = async (data: FormData) => {
 };
 
 export const getPosts = async () => {
-  console.log("servie hittes");
   const res = await fetch(`${API_BASE_URL}/posts/fetch`, {
     method: "GET",
     credentials: "include",
