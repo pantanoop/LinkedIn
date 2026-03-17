@@ -1,10 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @next/next/no-img-element */
-
 "use client";
 
 import "./UserCard.css";
-
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks/hooks";
 import {
   Box,
   Typography,
@@ -13,12 +10,38 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
-
-import CloseIcon from "@mui/icons-material/Close";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  toggleFollowUser,
+  toggleConnectionUser,
+} from "../../../redux/auth/authSlice";
 
 export default function UserCard({ user }: any) {
-  console.log("user", user);
+  const { currentUser, followingMap, connectionMap } = useAppSelector(
+    (state: any) => state.authenticator,
+  );
+  const isFollowing = followingMap[user.id];
+  const connection = connectionMap?.[user.id];
+  const connectionStatus = connection?.status || "NONE";
+  const dispatch = useAppDispatch();
+  function handleFollow() {
+    if (!currentUser?.id || !user?.id) return;
+    const data = {
+      followerId: currentUser.id,
+      followingId: user.id,
+    };
+    dispatch(toggleFollowUser(data));
+  }
+  function handleConnect() {
+    if (!currentUser?.id || !user?.id) return;
+    const data = {
+      currentUserId: currentUser.id,
+      targetUserId: user.id,
+    };
+    dispatch(toggleConnectionUser(data));
+  }
   return (
     <Paper elevation={0} className="suggestion-card">
       <Box className="cover-wrapper">
@@ -44,25 +67,34 @@ export default function UserCard({ user }: any) {
         <Typography className="name">
           {user.profileName || "LinkedIn User"}
         </Typography>
-
         <Typography className="headline">
           {user.userTitle || "No headline"}
         </Typography>
-
-        <Typography className="followers">10 followers</Typography>
-
+        <Typography className="followers">
+          {user.followersCount} followers
+        </Typography>
         <Button
-          startIcon={<AddIcon />}
           className="follow-btn"
           variant="contained"
+          startIcon={isFollowing ? "" : <AddIcon />}
           fullWidth
           sx={{ backgroundColor: "#1282f3" }}
+          onClick={() => handleFollow()}
         >
-          Follow
+          {isFollowing ? "Unfollow" : "Follow"}
         </Button>
 
-        <Button variant="outlined" fullWidth sx={{ mt: 1 }}>
-          Connect
+        <Button
+          className="follow-btn"
+          startIcon={<GroupAddIcon />}
+          variant="contained"
+          fullWidth
+          sx={{ mt: 1 }}
+          onClick={() => handleConnect()}
+        >
+          {connectionStatus === "NONE" && "Connect"}
+          {connectionStatus === "PENDING" && "Pending"}
+          {connectionStatus === "ACCEPTED" && "Connected"}
         </Button>
       </Box>
     </Paper>

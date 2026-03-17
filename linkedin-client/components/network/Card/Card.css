@@ -45,8 +45,8 @@
 }
 
 .circle {
-  width: 32px;
-  height: 32px;
+  width: 3vw !important;
+  height: 7vh !important;
   border-radius: 50%;
   border: 1px dashed #c7c7c7;
   display: flex;

@@ -6,25 +6,30 @@ import UserCard from "../../../components/network/UserCard/UserCard";
 import LinkedInNavbar from "../../../components/Navbar/navbar";
 import type { User } from "../../../redux/auth/authSlice";
 
-import { Box, Paper, Avatar, Typography, Button } from "@mui/material";
-
 import "./network.css";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
-import { fetchUsers, clearUsers } from "@/redux/auth/authSlice";
+import {
+  fetchUsers,
+  clearUsers,
+  fetchInvitations,
+} from "@/redux/auth/authSlice";
+import Card from "@/components/network/Card/Card";
+import InvitationCard from "@/components/network/InvitationCard/InvitationCard";
 
 export default function MyNetworkPage() {
   const dispatch = useAppDispatch();
 
-  const { users, page, limit, total } = useAppSelector(
-    (state: any) => state.authenticator,
-  );
-  console.log(users, "in network users");
+  const { currentUser, users, page, invitations, limit, total } =
+    useAppSelector((state: any) => state.authenticator);
 
   useEffect(() => {
     dispatch(clearUsers());
     dispatch(fetchUsers({ page: 1, limit }));
+    dispatch(fetchInvitations(currentUser.id));
   }, []);
+
+  console.log(invitations, "inv in network page");
 
   return (
     <div className="my-network-wrapper">
@@ -36,39 +41,8 @@ export default function MyNetworkPage() {
         </aside>
 
         <main className="main-column">
-          <Paper className="suggestion-section">
-            <div className="suggestion-header">
-              <h3>Invitations</h3>
-            </div>
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                p: 2,
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              <Avatar src="/default-avatar.png" />
-
-              <Box sx={{ flex: 1 }}>
-                <Typography sx={{ fontWeight: 600 }}>Bhenkarr</Typography>
-
-                <Typography
-                  sx={{
-                    fontSize: 13,
-                    color: "#666",
-                  }}
-                >
-                  Apdi bwe ka
-                </Typography>
-              </Box>
-
-              <Button variant="outlined">Ignore</Button>
-              <Button variant="contained">Accept</Button>
-            </Box>
-          </Paper>
+          <Card />
+          <InvitationCard invitations={invitations} />
 
           <div className="suggestion-section">
             <div className="suggestion-header">

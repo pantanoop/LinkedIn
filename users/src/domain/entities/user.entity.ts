@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Follow } from './follow.entity';
+import { Connection } from './connection.entity';
 
 @Entity('Users')
 export class User {
@@ -34,4 +36,16 @@ export class User {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.following)
+  followers: Follow[];
+
+  @OneToMany(() => Connection, (conn) => conn.requester)
+  sentConnections: Connection[];
+
+  @OneToMany(() => Connection, (conn) => conn.receiver)
+  receivedConnections: Connection[];
 }

@@ -84,18 +84,71 @@ export const getUsers = async ({
   return res.json();
 };
 
-export const toggleBanUser = async (userid: number) => {
-  console.log(userid);
-  const response = await fetch(`${API_BASE_URL}/auth/ban/${userid}`, {
-    method: "PATCH",
+export const toggleFollow = async (data: any) => {
+  const res = await fetch(`${API_URL}/users/follow`, {
+    method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    throw new Error(`Response status: ${response.status}`);
+  if (!res.ok) {
+    throw new Error("Failed to toggle follow");
   }
 
-  return response.json();
+  return res.json();
+};
+
+export const toggleConnection = async (data: any) => {
+  const res = await fetch(`${API_URL}/connections/toggle`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to toggle connection");
+  }
+
+  return res.json();
+};
+
+export const acceptConnection = async (data: any) => {
+  const res = await fetch(`${API_URL}/connections/accept`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to accept connection");
+  }
+
+  return res.json();
+};
+
+export const getInvitations = async (currentUserId: number) => {
+  console.log(currentUserId, "in service get invi");
+  const res = await fetch(`${API_URL}/connections/invitations`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentUserId }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch invitations");
+  }
+
+  return res.json();
 };

@@ -6,7 +6,7 @@ import { Box, Paper, Typography, Stack, Button } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 
-const InviteConnectionsCard = () => {
+const Card = () => {
   return (
     <Box className="network-page-container">
       <Paper elevation={1} className="invite-card">
@@ -43,4 +43,4 @@ const InviteConnectionsCard = () => {
   );
 };
 
-export default InviteConnectionsCard;
+export default Card;

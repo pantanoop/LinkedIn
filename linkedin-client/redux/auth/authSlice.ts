@@ -6,7 +6,10 @@ import {
   findUser,
   getUsers,
   SocialSignIn,
-  toggleBanUser,
+  toggleFollow,
+  toggleConnection,
+  acceptConnection,
+  getInvitations,
 } from "./authService";
 
 export type User = {
@@ -27,24 +30,63 @@ export type User = {
 
 export type AuthState = {
   users: User[];
+  invitations: [];
   total: number;
   page: number;
   limit: number;
   currentUser: User | null;
   loading: boolean;
   error: string | null;
+  followingMap: Record<number, boolean>;
+  connectionMap: Record<
+    number,
+    { status: "NONE" | "PENDING" | "ACCEPTED"; connectionId?: number }
+  >;
 };
 
 const initialState: AuthState = {
   users: [],
+  invitations: [],
   total: 0,
   page: 1,
   limit: 5,
   currentUser: null,
   loading: false,
   error: null,
+  followingMap: {},
+  connectionMap: {},
 };
-
+export const fetchInvitations = createAsyncThunk(
+  "user/fetchInvitations",
+  async (currentUserId: number, { rejectWithValue }) => {
+    try {
+      console.log("fetch ini thunk hit", currentUserId);
+      return await getInvitations(currentUserId);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+export const toggleConnectionUser = createAsyncThunk(
+  "user/toggleConnection",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      return await toggleConnection(data);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+export const acceptConnectionUser = createAsyncThunk(
+  "user/acceptConnection",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      return await acceptConnection(data);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 export const signupWithFirebaseToken = createAsyncThunk(
   "auth/signupWithFirebase",
   async ({ idToken }: { idToken: string }, { rejectWithValue }) => {
@@ -121,11 +163,11 @@ export const fetchUsers = createAsyncThunk(
   },
 );
 
-export const toggleUserBan = createAsyncThunk(
-  "user/toggleBan",
-  async (userid: number, { rejectWithValue }) => {
+export const toggleFollowUser = createAsyncThunk(
+  "user/toggleFollow",
+  async (data: any, { rejectWithValue }) => {
     try {
-      return await toggleBanUser(userid);
+      return await toggleFollow(data);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -226,7 +268,6 @@ const authenticateSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        console.log(action.payload, "in slic user");
         state.loading = false;
         state.users = action.payload.data;
         state.total = action.payload.total;
@@ -234,6 +275,58 @@ const authenticateSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(toggleFollowUser.fulfilled, (state, action) => {
+        const { followingId, isFollowing } = action.payload;
+
+        state.followingMap[followingId] = isFollowing;
+
+        state.users = state.users.map((user) => {
+          if (user.id === followingId) {
+            return {
+              ...user,
+              followersCount:
+                (user.followersCount || 0) + (isFollowing ? 1 : -1),
+            };
+          }
+          return user;
+        });
+        if (state.currentUser) {
+          state.currentUser.followingCount =
+            (state.currentUser.followingCount || 0) + (isFollowing ? 1 : -1);
+        }
+      })
+      .addCase(toggleConnectionUser.fulfilled, (state, action) => {
+        const { targetUserId, status, connectionId } = action.payload;
+        console.log("toggle conn slice", action.payload);
+
+        state.connectionMap[targetUserId] = {
+          status,
+          connectionId,
+        };
+
+        if (status === "NONE") {
+          state.users = state.users.map((user) => {
+            if (user.id === targetUserId) {
+              return {
+                ...user,
+                connectionsCount: Math.max((user.connectionsCount || 1) - 1, 0),
+              };
+            }
+            return user;
+          });
+
+          if (state.currentUser) {
+            state.currentUser.connectionsCount = Math.max(
+              (state.currentUser.connectionsCount || 1) - 1,
+              0,
+            );
+          }
+        }
+      })
+      .addCase(fetchInvitations.fulfilled, (state, action) => {
+        console.log("fetch invi slice", action.payload);
+        state.invitations = action.payload;
       });
   },
 });
