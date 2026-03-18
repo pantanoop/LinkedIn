@@ -6,6 +6,8 @@ import { UserProfileCreateController } from './userProfile_create/userProfile_cr
 import { JwtModule } from '@nestjs/jwt';
 import { FetchUsersController } from './fetch_users/fetch_users.controller';
 import { FetchUsersService } from '../user/fetch_users/fetch_users.service';
+import { AddUserDataController } from './add_user_data/add_user_profile_data.controller';
+import { AddUserDataService } from './add_user_data/add_user_profile_data.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -13,7 +15,11 @@ import { FetchUsersService } from '../user/fetch_users/fetch_users.service';
       secret: process.env.JWT_SECRET || 'supersecret',
     }),
   ],
-  controllers: [UserProfileCreateController, FetchUsersController],
-  providers: [UserProfileCreateService, FetchUsersService],
+  controllers: [
+    UserProfileCreateController,
+    FetchUsersController,
+    AddUserDataController,
+  ],
+  providers: [UserProfileCreateService, FetchUsersService, AddUserDataService],
 })
 export class UserModule {}

@@ -11,7 +11,6 @@ export class FetchConnectionRequestController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async getInvitations(@Body() body: { currentUserId: number }) {
-    console.log('get inv dto hit', body.currentUserId);
     return this.connectionService.getInvitations(body.currentUserId);
   }
 }

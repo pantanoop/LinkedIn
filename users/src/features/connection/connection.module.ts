@@ -9,6 +9,8 @@ import { AcceptConnectionController } from './accept_connection/accept_connectio
 import { JwtModule } from '@nestjs/jwt';
 import { FetchConnectionRequestController } from './fetch_connection_requests/fetch_connection_requests.controller';
 import { FetchConnectionRequestService } from './fetch_connection_requests/fetch_connection_requests.service';
+import { GetConnectionStatusController } from './get_connection_status/get_connection_status.controller';
+import { GetConnectionStatusService } from './get_connection_status/get_connection_status.service';
 
 @Module({
   imports: [
@@ -21,11 +23,13 @@ import { FetchConnectionRequestService } from './fetch_connection_requests/fetch
     ToggleConnectionController,
     AcceptConnectionController,
     FetchConnectionRequestController,
+    GetConnectionStatusController,
   ],
   providers: [
     ToggleConnectionService,
     AcceptConnectionService,
     FetchConnectionRequestService,
+    GetConnectionStatusService,
   ],
 })
 export class ConnectionModule {}

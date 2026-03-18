@@ -60,12 +60,6 @@ export class UserProfileCreateService {
     const newUser = this.userRepository.create({
       userid,
       profileName,
-
-      userTitle: 'Software Developer',
-      about: 'Building cool stuff on LinkedIn clone',
-      profileUrl: 'https://i.pravatar.cc/150?img=12',
-      coverUrl: 'https://i.pravatar.cc/150?img=12',
-
       followersCount: 0,
       followingCount: 0,
       connectionsCount: 0,

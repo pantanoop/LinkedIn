@@ -4,10 +4,13 @@
 import "./LeftSideBar.css";
 
 import { Box, Paper, Typography, Stack, Button } from "@mui/material";
-
+import { useAppSelector } from "../../../redux/hooks/hooks";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const NetworkLeftSidebar = () => {
+  const { currentUser, invitations } = useAppSelector(
+    (state: any) => state.authenticator,
+  );
   return (
     <Box className="network-left-container">
       <Paper elevation={1} className="network-card">
@@ -19,9 +22,9 @@ const NetworkLeftSidebar = () => {
           className="stats-row"
         >
           {[
-            { value: 0, label: "Invites sent" },
-            { value: 0, label: "Connections" },
-            { value: 0, label: "Following" },
+            { value: invitations.length, label: "Invites sent" },
+            { value: currentUser?.connectionsCount || 0, label: "Connections" },
+            { value: currentUser?.followingCount || 0, label: "Following" },
           ].map((stat, i) => (
             <Box key={i} className="stat-item">
               <Typography className="stat-number">{stat.value}</Typography>

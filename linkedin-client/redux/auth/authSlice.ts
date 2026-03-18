@@ -10,6 +10,8 @@ import {
   toggleConnection,
   acceptConnection,
   getInvitations,
+  getConnectionStatus,
+  completeProfile,
 } from "./authService";
 
 export type User = {
@@ -28,9 +30,17 @@ export type User = {
   createdAt?: string;
 };
 
+export type Invitation = {
+  connectionId: number;
+  requesterId: number;
+  profileName?: string;
+  userTitle?: string;
+  profileUrl?: string;
+};
+
 export type AuthState = {
   users: User[];
-  invitations: [];
+  invitations: Invitation[];
   total: number;
   page: number;
   limit: number;
@@ -56,17 +66,29 @@ const initialState: AuthState = {
   followingMap: {},
   connectionMap: {},
 };
+
 export const fetchInvitations = createAsyncThunk(
   "user/fetchInvitations",
   async (currentUserId: number, { rejectWithValue }) => {
     try {
-      console.log("fetch ini thunk hit", currentUserId);
       return await getInvitations(currentUserId);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
   },
 );
+
+export const fetchConnectionStatus = createAsyncThunk(
+  "user/fetchConnectionStatus",
+  async (currentUserId: number, { rejectWithValue }) => {
+    try {
+      return await getConnectionStatus(currentUserId);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const toggleConnectionUser = createAsyncThunk(
   "user/toggleConnection",
   async (data: any, { rejectWithValue }) => {
@@ -77,6 +99,7 @@ export const toggleConnectionUser = createAsyncThunk(
     }
   },
 );
+
 export const acceptConnectionUser = createAsyncThunk(
   "user/acceptConnection",
   async (data: any, { rejectWithValue }) => {
@@ -87,10 +110,21 @@ export const acceptConnectionUser = createAsyncThunk(
     }
   },
 );
+
+export const completeProfileUser = createAsyncThunk(
+  "user/completeProfile",
+  async (formData: FormData, { rejectWithValue }) => {
+    try {
+      return await completeProfile(formData);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const signupWithFirebaseToken = createAsyncThunk(
   "auth/signupWithFirebase",
   async ({ idToken }: { idToken: string }, { rejectWithValue }) => {
-    console.log(idToken);
     try {
       return await signupWithToken(idToken);
     } catch (err: any) {
@@ -102,7 +136,6 @@ export const signupWithFirebaseToken = createAsyncThunk(
 export const signInWithFirebaseToken = createAsyncThunk(
   "auth/signInWithFirebase",
   async ({ idToken }: { idToken: string }, { rejectWithValue }) => {
-    console.log(idToken);
     try {
       return await signInWithToken(idToken);
     } catch (err: any) {
@@ -114,7 +147,6 @@ export const signInWithFirebaseToken = createAsyncThunk(
 export const userProfileCreate = createAsyncThunk(
   "user/profile",
   async (profileData: any, { rejectWithValue }) => {
-    console.log(profileData, "dtaa in user profile create");
     try {
       return await userProfile(profileData);
     } catch (error: any) {
@@ -126,7 +158,6 @@ export const userProfileCreate = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "user/login",
   async (credentials: any, { rejectWithValue }) => {
-    console.log(credentials, "credentials in login");
     try {
       return await findUser(credentials);
     } catch (error: any) {
@@ -137,13 +168,10 @@ export const loginUser = createAsyncThunk(
 
 export const socialLogin = createAsyncThunk(
   "user/loginGoogle",
-
   async (credentials: any, { rejectWithValue }) => {
-    console.log(credentials, "credentials in login google");
     try {
       return await SocialSignIn(credentials);
     } catch (error: any) {
-      console.log(error, "hsfhg");
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -190,45 +218,33 @@ const authenticateSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
       .addCase(signupWithFirebaseToken.pending, (state) => {
-        console.log("register pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(signupWithFirebaseToken.fulfilled, (state, action) => {
-        console.log("register fulfilled", action.payload);
         state.loading = false;
         state.currentUser = action.payload;
-        console.log("currentUser after creatinguser", state.currentUser);
       })
       .addCase(signupWithFirebaseToken.rejected, (state, action) => {
-        console.log("register rejected");
-        console.log("register error", state.error);
         state.loading = false;
         state.error = action.payload as string;
         state.currentUser = null;
       })
       .addCase(signInWithFirebaseToken.pending, (state) => {
-        console.log("login pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(signInWithFirebaseToken.fulfilled, (state, action) => {
-        console.log("login fulfilled", action.payload);
         state.loading = false;
         state.currentUser = action.payload;
-        console.log("currentUser after login user", state.currentUser);
       })
       .addCase(signInWithFirebaseToken.rejected, (state, action) => {
-        console.log("login rejected");
-        console.log("login error", state.error);
         state.loading = false;
         state.error = action.payload as string;
         state.currentUser = null;
       })
       .addCase(userProfileCreate.pending, (state) => {
-        console.log("profile creation pending");
         state.loading = true;
         state.error = null;
       })
@@ -247,22 +263,17 @@ const authenticateSlice = createSlice({
         state.currentUser = null;
       })
       .addCase(socialLogin.pending, (state) => {
-        console.log("login pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(socialLogin.fulfilled, (state, action) => {
-        console.log("login fulfilled", action.payload);
         state.loading = false;
         state.currentUser = action.payload;
       })
       .addCase(socialLogin.rejected, (state, action) => {
-        console.log("login rejected");
-        console.log("login google error", state.error);
         state.loading = false;
         state.error = "User Banned Contact Admin";
         state.currentUser = null;
-        console.log("login google error", state.error);
       })
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
@@ -291,42 +302,110 @@ const authenticateSlice = createSlice({
           }
           return user;
         });
+
         if (state.currentUser) {
           state.currentUser.followingCount =
             (state.currentUser.followingCount || 0) + (isFollowing ? 1 : -1);
         }
       })
       .addCase(toggleConnectionUser.fulfilled, (state, action) => {
-        const { targetUserId, status, connectionId } = action.payload;
-        console.log("toggle conn slice", action.payload);
-
-        state.connectionMap[targetUserId] = {
+        const {
+          targetUserId,
           status,
           connectionId,
-        };
+          requesterId,
+          requesterConnectionsCount,
+          receiverConnectionsCount,
+        } = action.payload;
 
         if (status === "NONE") {
-          state.users = state.users.map((user) => {
-            if (user.id === targetUserId) {
-              return {
-                ...user,
-                connectionsCount: Math.max((user.connectionsCount || 1) - 1, 0),
-              };
-            }
-            return user;
-          });
+          delete state.connectionMap[targetUserId];
 
           if (state.currentUser) {
-            state.currentUser.connectionsCount = Math.max(
-              (state.currentUser.connectionsCount || 1) - 1,
-              0,
-            );
+            if (state.currentUser.id === requesterId) {
+              state.currentUser.connectionsCount = requesterConnectionsCount;
+            } else {
+              state.currentUser.connectionsCount = receiverConnectionsCount;
+            }
           }
+          const otherUser = state.users.find((u) => u.id === targetUserId);
+          if (otherUser) {
+            if (otherUser.id === requesterId) {
+              otherUser.connectionsCount = requesterConnectionsCount;
+            } else {
+              otherUser.connectionsCount = receiverConnectionsCount;
+            }
+          }
+        } else {
+          state.connectionMap[targetUserId] = {
+            status,
+            connectionId,
+          };
         }
       })
       .addCase(fetchInvitations.fulfilled, (state, action) => {
-        console.log("fetch invi slice", action.payload);
         state.invitations = action.payload;
+      })
+      .addCase(acceptConnectionUser.fulfilled, (state, action) => {
+        const {
+          requesterId,
+          connectionId,
+          requesterConnectionsCount,
+          receiverConnectionsCount,
+        } = action.payload;
+
+        state.connectionMap[requesterId] = {
+          status: "ACCEPTED",
+          connectionId,
+        };
+
+        state.invitations = state.invitations.filter(
+          (inv) => inv.connectionId !== connectionId,
+        );
+
+        const requester = state.users.find((u) => u.id === requesterId);
+        if (requester) {
+          requester.connectionsCount = requesterConnectionsCount;
+        }
+
+        if (state.currentUser) {
+          if (state.currentUser.id === requesterId) {
+            state.currentUser.connectionsCount = requesterConnectionsCount;
+          } else {
+            state.currentUser.connectionsCount = receiverConnectionsCount;
+          }
+        }
+      })
+      .addCase(fetchConnectionStatus.fulfilled, (state, action) => {
+        state.connectionMap = {};
+        action.payload.forEach((conn: any) => {
+          state.connectionMap[conn.userId] = {
+            status: conn.status,
+            connectionId: conn.connectionId,
+          };
+        });
+      })
+      .addCase(completeProfileUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(completeProfileUser.fulfilled, (state, action) => {
+        state.loading = false;
+
+        const updatedUser = action.payload.user;
+        if (state.currentUser) {
+          state.currentUser = {
+            ...state.currentUser,
+            ...updatedUser,
+          };
+        }
+        state.users = state.users.map((user) =>
+          user.id === updatedUser.id ? { ...user, ...updatedUser } : user,
+        );
+      })
+      .addCase(completeProfileUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

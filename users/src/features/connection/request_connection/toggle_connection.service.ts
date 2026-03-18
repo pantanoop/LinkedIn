@@ -1,4 +1,3 @@
-// follow.service.ts
 import {
   Injectable,
   BadRequestException,
@@ -24,7 +23,6 @@ export class ToggleConnectionService {
 
   async toggleConnection(data: any) {
     const { currentUserId, targetUserId } = data;
-    
 
     if (currentUserId === targetUserId) {
       throw new BadRequestException('You cannot connect with yourself');
@@ -38,6 +36,7 @@ export class ToggleConnectionService {
     if (!currentUser || !targetUser) {
       throw new NotFoundException('User not found');
     }
+
     const existingConnection = await this.connectionRepo.findOne({
       where: [
         {
@@ -64,6 +63,7 @@ export class ToggleConnectionService {
         message: 'Connection request sent',
         status: 'PENDING',
         connectionId: connection.id,
+        targetUserId,
       };
     }
     if (existingConnection.status === 'PENDING') {
@@ -76,28 +76,46 @@ export class ToggleConnectionService {
       return {
         message: 'Connection request cancelled',
         status: 'NONE',
+        targetUserId,
       };
     }
     if (existingConnection.status === 'ACCEPTED') {
       return this.dataSource.transaction(async (manager) => {
-        await manager.decrement(
-          User,
-          { id: currentUserId },
-          'connectionsCount',
-          1,
-        );
-        await manager.decrement(
-          User,
-          { id: targetUserId },
-          'connectionsCount',
-          1,
-        );
+        const requesterId = existingConnection.requester.id;
+        const receiverId = existingConnection.receiver.id;
+
+        await manager
+          .createQueryBuilder()
+          .update(User)
+          .set({
+            connectionsCount: () => 'GREATEST(connectionsCount - 1, 0)',
+          })
+          .where('id = :id', { id: requesterId })
+          .execute();
+
+        await manager
+          .createQueryBuilder()
+          .update(User)
+          .set({
+            connectionsCount: () => 'GREATEST(connectionsCount - 1, 0)',
+          })
+          .where('id = :id', { id: receiverId })
+          .execute();
 
         await manager.delete(Connection, { id: existingConnection.id });
+
+        const [updatedRequester, updatedReceiver] = await Promise.all([
+          manager.findOne(User, { where: { id: requesterId } }),
+          manager.findOne(User, { where: { id: receiverId } }),
+        ]);
 
         return {
           message: 'Connection removed',
           status: 'NONE',
+          targetUserId,
+          requesterId,
+          requesterConnectionsCount: updatedRequester?.connectionsCount,
+          receiverConnectionsCount: updatedReceiver?.connectionsCount,
         };
       });
     }

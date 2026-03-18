@@ -15,23 +15,28 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+const authPersistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["currentUser"],
+};
+
+const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
+
 const persistConfig = {
   key: "root",
   storage,
   whitelist: ["authenticator"],
 };
 
-const persistedReducer = persistReducer(
-  persistConfig,
-  combineReducers({
-    authenticator: authReducer,
-    post: postReducer,
-    comments: commentReducer,
-  }),
-);
+const rootReducer = combineReducers({
+  authenticator: persistedAuthReducer,
+  post: postReducer,
+  comments: commentReducer,
+});
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

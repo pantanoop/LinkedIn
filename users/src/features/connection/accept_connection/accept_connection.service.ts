@@ -47,22 +47,25 @@ export class AcceptConnectionService {
       connection.status = ConnectionStatus.ACCEPTED;
       await manager.save(connection);
 
-      await manager.increment(
-        User,
-        { id: connection.requester.id },
-        'connectionsCount',
-        1,
-      );
-      await manager.increment(
-        User,
-        { id: connection.receiver.id },
-        'connectionsCount',
-        1,
-      );
+      const requesterId = connection.requester.id;
+      const receiverId = connection.receiver.id;
+
+      await manager.increment(User, { id: requesterId }, 'connectionsCount', 1);
+      await manager.increment(User, { id: receiverId }, 'connectionsCount', 1);
+
+      // ✅ fetch updated values
+      const [updatedRequester, updatedReceiver] = await Promise.all([
+        manager.findOne(User, { where: { id: requesterId } }),
+        manager.findOne(User, { where: { id: receiverId } }),
+      ]);
 
       return {
         message: 'Connection accepted',
         status: 'ACCEPTED',
+        connectionId: connection.id,
+        requesterId,
+        requesterConnectionsCount: updatedRequester?.connectionsCount,
+        receiverConnectionsCount: updatedReceiver?.connectionsCount,
       };
     });
   }

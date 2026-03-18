@@ -152,3 +152,35 @@ export const getInvitations = async (currentUserId: number) => {
 
   return res.json();
 };
+
+export const getConnectionStatus = async (currentUserId: number) => {
+  console.log(currentUserId, "in service get invi");
+  const res = await fetch(`${API_URL}/connections/status`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentUserId }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch invitations");
+  }
+
+  return res.json();
+};
+
+export const completeProfile = async (formData: FormData) => {
+  const res = await fetch(`${API_URL}/users/add/profile`, {
+    method: "PATCH",
+    credentials: "include",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to complete profile");
+  }
+
+  return res.json();
+};

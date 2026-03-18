@@ -23,7 +23,6 @@ export class UserProfileTable1771240753082 implements MigrationInterface {
             name: 'profileName',
             type: 'varchar',
             isNullable: true,
-            isUnique: true,
           },
           {
             name: 'userTitle',

@@ -13,23 +13,30 @@ import {
   fetchUsers,
   clearUsers,
   fetchInvitations,
+  fetchConnectionStatus,
 } from "@/redux/auth/authSlice";
+
 import Card from "@/components/network/Card/Card";
 import InvitationCard from "@/components/network/InvitationCard/InvitationCard";
 
 export default function MyNetworkPage() {
   const dispatch = useAppDispatch();
 
-  const { currentUser, users, page, invitations, limit, total } =
-    useAppSelector((state: any) => state.authenticator);
+  const { currentUser, users, invitations, limit } = useAppSelector(
+    (state: any) => state.authenticator,
+  );
 
   useEffect(() => {
-    dispatch(clearUsers());
-    dispatch(fetchUsers({ page: 1, limit }));
-    dispatch(fetchInvitations(currentUser.id));
-  }, []);
+    if (!currentUser?.id) return;
 
-  console.log(invitations, "inv in network page");
+    const loadData = async () => {
+      await dispatch(fetchUsers({ page: 1, limit }));
+      await dispatch(fetchInvitations(currentUser.id));
+      await dispatch(fetchConnectionStatus(currentUser.id));
+    };
+
+    loadData();
+  }, [currentUser?.id]);
 
   return (
     <div className="my-network-wrapper">

@@ -142,7 +142,7 @@ export default function Navbar() {
                 className="li-view-profile"
                 onClick={() => {
                   handleClose();
-                  //   router.push("/profile");
+                  router.push("/profile");
                 }}
               >
                 View profile

@@ -11,12 +11,6 @@ export class UserProfileCreateController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create_userProfile(@Body() data: any) {
-    // console.log('controller hitted', data);
-    // const userProfileName =
-    //   await this.userProfileCreateService.create_userProfile(data);
-
-    // return { profileName: userProfileName };
-
     return await this.userProfileCreateService.create_userProfile(data);
   }
 }

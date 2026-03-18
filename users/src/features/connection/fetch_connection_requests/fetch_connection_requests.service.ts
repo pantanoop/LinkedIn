@@ -23,7 +23,6 @@ export class FetchConnectionRequestService {
   ) {}
 
   async getInvitations(currentUserId: number) {
-    console.log('in service fetch invi', currentUserId);
     const invitations = await this.connectionRepo.find({
       where: {
         receiver: { id: currentUserId },

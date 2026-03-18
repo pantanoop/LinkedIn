@@ -5,13 +5,48 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {
   acceptConnectionUser,
   toggleConnectionUser,
+  fetchUsers,
+  fetchInvitations,
+  fetchConnectionStatus,
 } from "@/redux/auth/authSlice";
 
 export default function InvitationCard({ invitations }: any) {
   const dispatch = useAppDispatch();
-  const { currentUser } = useAppSelector((state: any) => state.authenticator);
+
+  const { currentUser, limit } = useAppSelector(
+    (state: any) => state.authenticator,
+  );
 
   const isEmpty = !invitations || invitations.length === 0;
+
+  const handleIgnore = async (requesterId: number) => {
+    if (!currentUser?.id) return;
+
+    await dispatch(
+      toggleConnectionUser({
+        currentUserId: currentUser.id,
+        targetUserId: requesterId,
+      }),
+    );
+
+    await dispatch(fetchInvitations(currentUser.id));
+    await dispatch(fetchConnectionStatus(currentUser.id));
+  };
+
+  const handleAccept = async (connectionId: number) => {
+    if (!currentUser?.id) return;
+
+    await dispatch(
+      acceptConnectionUser({
+        connectionId,
+        currentUserId: currentUser.id,
+      }),
+    );
+
+    await dispatch(fetchUsers({ page: 1, limit }));
+    await dispatch(fetchInvitations(currentUser.id));
+    await dispatch(fetchConnectionStatus(currentUser.id));
+  };
 
   return (
     <Paper className="suggestion-section">
@@ -44,40 +79,21 @@ export default function InvitationCard({ invitations }: any) {
                 {inv.profileName}
               </Typography>
 
-              <Typography
-                sx={{
-                  fontSize: 13,
-                  color: "#666",
-                }}
-              >
+              <Typography sx={{ fontSize: 13, color: "#666" }}>
                 {inv.userTitle || "No headline"}
               </Typography>
             </Box>
 
             <Button
               variant="outlined"
-              onClick={() =>
-                dispatch(
-                  toggleConnectionUser({
-                    currentUserId: currentUser.id,
-                    targetUserId: inv.requesterId,
-                  }),
-                )
-              }
+              onClick={() => handleIgnore(inv.requesterId)}
             >
               Ignore
             </Button>
 
             <Button
               variant="contained"
-              onClick={() =>
-                dispatch(
-                  acceptConnectionUser({
-                    connectionId: inv.connectionId,
-                    currentUserId: currentUser.id,
-                  }),
-                )
-              }
+              onClick={() => handleAccept(inv.connectionId)}
             >
               Accept
             </Button>

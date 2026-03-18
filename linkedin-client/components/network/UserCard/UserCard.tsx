@@ -16,37 +16,50 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   toggleFollowUser,
   toggleConnectionUser,
+  fetchConnectionStatus,
 } from "../../../redux/auth/authSlice";
 
 export default function UserCard({ user }: any) {
+  const dispatch = useAppDispatch();
+
   const { currentUser, followingMap, connectionMap } = useAppSelector(
     (state: any) => state.authenticator,
   );
+
   const isFollowing = followingMap[user.id];
-  const connection = connectionMap?.[user.id];
+
+  const connection = connectionMap?.[String(user.id)];
   const connectionStatus = connection?.status || "NONE";
-  const dispatch = useAppDispatch();
-  function handleFollow() {
+
+  async function handleFollow() {
     if (!currentUser?.id || !user?.id) return;
+
     const data = {
       followerId: currentUser.id,
       followingId: user.id,
     };
-    dispatch(toggleFollowUser(data));
+
+    await dispatch(toggleFollowUser(data));
   }
-  function handleConnect() {
+
+  async function handleConnect() {
     if (!currentUser?.id || !user?.id) return;
+
     const data = {
       currentUserId: currentUser.id,
       targetUserId: user.id,
     };
-    dispatch(toggleConnectionUser(data));
+
+    await dispatch(toggleConnectionUser(data));
+
+    await dispatch(fetchConnectionStatus(currentUser.id));
   }
+
   return (
     <Paper elevation={0} className="suggestion-card">
       <Box className="cover-wrapper">
         <img
-          src={user.coverUrl ? user.coverUrl : "/default-cover.jpg"}
+          src={user.coverUrl || "/default-cover.jpg"}
           alt="cover"
           className="cover-image"
         />
@@ -58,7 +71,7 @@ export default function UserCard({ user }: any) {
 
       <Box className="avatar-wrapper">
         <Avatar
-          src={user.profileUrl ? user.profileUrl : "/default-avatar.png"}
+          src={user.profileUrl || "/default-avatar.png"}
           className="avatar"
         />
       </Box>
@@ -67,19 +80,22 @@ export default function UserCard({ user }: any) {
         <Typography className="name">
           {user.profileName || "LinkedIn User"}
         </Typography>
+
         <Typography className="headline">
           {user.userTitle || "No headline"}
         </Typography>
+
         <Typography className="followers">
           {user.followersCount} followers
         </Typography>
+
         <Button
           className="follow-btn"
           variant="contained"
-          startIcon={isFollowing ? "" : <AddIcon />}
+          startIcon={isFollowing ? null : <AddIcon />}
           fullWidth
           sx={{ backgroundColor: "#1282f3" }}
-          onClick={() => handleFollow()}
+          onClick={handleFollow}
         >
           {isFollowing ? "Unfollow" : "Follow"}
         </Button>
@@ -90,11 +106,11 @@ export default function UserCard({ user }: any) {
           variant="contained"
           fullWidth
           sx={{ mt: 1 }}
-          onClick={() => handleConnect()}
+          onClick={handleConnect}
         >
           {connectionStatus === "NONE" && "Connect"}
           {connectionStatus === "PENDING" && "Pending"}
-          {connectionStatus === "ACCEPTED" && "Connected"}
+          {connectionStatus === "ACCEPTED" && "Remove Connection"}
         </Button>
       </Box>
     </Paper>
