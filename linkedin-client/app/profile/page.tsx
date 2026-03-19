@@ -6,11 +6,14 @@ import "./profile.css";
 
 import ProfileHeader from "@/components/Profile/ProfileHeader/ProfileHeader";
 import ProfileSections from "@/components/Profile/ProfileSection/ProfileSection";
-import AddProfileMenuModal from "../../../components/Profile/ProfileMenuModal/ProfileMenuModal";
-import EducationForm from "../../../components/Profile/Eductaion/Education";
-import ExperienceForm from "../../../components/Profile/Experience/Experience";
-import SkillsForm from "../../../components/Profile/Skills/Skills";
-import LinkedInNavbar from "../../../components/Navbar/navbar";
+
+import AddProfileMenuModal from "@/components/Profile/ProfileMenuModal/ProfileMenuModal";
+
+import EducationForm from "../../components/Profile/Eductaion/EducationModal/Education";
+import ExperienceForm from "../../components/Profile/Experience/ExperienceModal/Experience";
+import SkillsForm from "../../components/Profile/Skills/SkillModal/Skills";
+
+import LinkedInNavbar from "@/components/Navbar/navbar";
 import CompleteProfilePage from "../profileform/page";
 
 export default function ProfilePage() {
@@ -27,29 +30,25 @@ export default function ProfilePage() {
     openSkills ||
     openUpdateProfile;
 
-  const profile = {
-    firstName: "Anoop",
-    lastName: "Pant",
-    headline: "Software Developer | Building LinkedIn Clone",
-    about:
-      "Passionate developer focused on building scalable web applications using React, Next.js, and NestJS.",
-  };
-
   const education = [
     {
       id: 1,
-      school: "ABC University",
+      schoolName: "ABC University",
       degree: "B.Tech Computer Science",
-      duration: "2020 - 2024",
+      startDate: "2020-01-01",
+      endDate: "2024-01-01",
     },
   ];
 
   const experience = [
     {
       id: 1,
-      company: "Zenmonk",
-      role: "Software Developer",
-      duration: "2024 - Present",
+      title: "Software Developer",
+      companyName: "Zenmonk",
+      startDate: "2024-01-01",
+      endDate: null,
+      currentlyWorking: true,
+      description: "Working on scalable web apps",
     },
   ];
 
@@ -65,15 +64,7 @@ export default function ProfilePage() {
       {!isModalOpen && <LinkedInNavbar />}
 
       <div className={`profile-container ${isModalOpen ? "page-blur" : ""}`}>
-        <ProfileHeader
-          firstName={profile.firstName}
-          lastName={profile.lastName}
-          headline={profile.headline}
-          about={profile.about}
-          profilePicture={undefined} // ❌ no image
-          coverPicture={undefined} // ❌ no image
-          onAddSection={() => setOpenMenu(true)}
-        />
+        <ProfileHeader onAddSection={() => setOpenMenu(true)} />
 
         <ProfileSections
           education={education}
@@ -87,10 +78,7 @@ export default function ProfilePage() {
 
       {openMenu && (
         <div className="modal-wrapper" onClick={() => setOpenMenu(false)}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ position: "absolute", top: "2rem" }}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <AddProfileMenuModal
               onClose={() => setOpenMenu(false)}
               onAddEducation={() => {
@@ -116,7 +104,7 @@ export default function ProfilePage() {
 
       {openEducation && (
         <div className="modal-wrapper" onClick={() => setOpenEducation(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <EducationForm onClose={() => setOpenEducation(false)} />
           </div>
         </div>
@@ -124,7 +112,7 @@ export default function ProfilePage() {
 
       {openExperience && (
         <div className="modal-wrapper" onClick={() => setOpenExperience(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <ExperienceForm onClose={() => setOpenExperience(false)} />
           </div>
         </div>
@@ -132,7 +120,7 @@ export default function ProfilePage() {
 
       {openSkills && (
         <div className="modal-wrapper" onClick={() => setOpenSkills(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <SkillsForm onClose={() => setOpenSkills(false)} />
           </div>
         </div>
@@ -143,7 +131,7 @@ export default function ProfilePage() {
           className="modal-wrapper"
           onClick={() => setOpenUpdateProfile(false)}
         >
-          <div onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <CompleteProfilePage onClose={() => setOpenUpdateProfile(false)} />
           </div>
         </div>

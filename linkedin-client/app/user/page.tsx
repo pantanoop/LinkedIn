@@ -2,7 +2,7 @@
 
 import "./profile.css";
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { useRouter } from "next/navigation";
 
 import {
@@ -18,7 +18,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { userProfileCreate } from "../../../redux/auth/authSlice";
+import { userProfileCreate } from "../../redux/auth/authSlice";
 
 const UserSchema = z.object({
   first_name: z.string().trim().min(1, "First name is required"),
@@ -32,17 +32,16 @@ export default function CompleteProfile() {
   const router = useRouter();
 
   const { currentUser, loading } = useAppSelector(
-    (state) => state.authenticator,
+    (state: any) => state.authenticator,
   );
 
   useEffect(() => {
-    if (!currentUser) {
-      router.replace("/auth/login");
+    if (currentUser.profileUrl) {
+      router.push("/dashboard");
+    } else {
+      router.push("/user");
     }
-
-    if (currentUser?.profileName) {
-      router.replace("/dashboard");
-    }
+    if (!currentUser) router.push("/auth/login");
   }, [currentUser, router]);
   console.log(currentUser, "currentUser in profile page");
 
@@ -68,6 +67,7 @@ export default function CompleteProfile() {
     try {
       console.log("p data", profileData);
       await dispatch(userProfileCreate(profileData)).unwrap();
+      router.push("/dashboard");
     } catch (error: any) {
       console.error("Profile creation failed:", error);
     }

@@ -8,28 +8,41 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ArticleIcon from "@mui/icons-material/Article";
 import EventIcon from "@mui/icons-material/Event";
+import { useAppSelector } from "@/redux/hooks/hooks";
 
 export default function LeftSidebar() {
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
   return (
     <Box className="left-sidebar">
       <Paper className="profile-card">
-        <div className="profile-cover"></div>
-
-        <Avatar src="/profile.jpg" className="profile-avatar" />
+        <div
+          className="profile-cover"
+          style={{
+            backgroundImage: `url('${currentUser.profileUrl ?? ""}')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "6rem",
+          }}
+        ></div>
+        <Avatar src={currentUser.profileUrl ?? ""} className="profile-avatar" />
 
         <div className="profile-info">
-          <Typography className="profile-name">Anoop Pant</Typography>
-
-          <Typography className="profile-headline">Student at CCET</Typography>
-
-          <Typography className="profile-location">
-            Sec-26, Chandigarh
+          <Typography className="profile-name">
+            {currentUser.profileName}
           </Typography>
 
-          <div className="profile-company">
+          <Typography className="profile-headline">
+            {currentUser.userTitle}
+          </Typography>
+
+          <Typography className="profile-location">
+            {currentUser.about}
+          </Typography>
+
+          {/* <div className="profile-company">
             <div className="company-logo"></div>
             <span>CCET</span>
-          </div>
+          </div> */}
         </div>
       </Paper>
 

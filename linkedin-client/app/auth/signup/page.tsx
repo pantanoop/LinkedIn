@@ -72,6 +72,7 @@ export default function SignUp() {
       firebaseUser = res.user;
       const idToken = await firebaseUser.getIdToken(true);
       dispatch(signupWithFirebaseToken({ idToken })).unwrap();
+      router.push("/user");
     } catch (error: any) {
       if (firebaseUser) {
         await firebaseUser.delete();
@@ -99,6 +100,7 @@ export default function SignUp() {
       const idToken = await firebaseUser.getIdToken(true);
       console.log("usr from google", res.user);
       dispatch(signupWithFirebaseToken({ idToken })).unwrap();
+      router.push("/user");
     } catch (error) {
       if (firebaseUser) {
         await firebaseUser.delete();

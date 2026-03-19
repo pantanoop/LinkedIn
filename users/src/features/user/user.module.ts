@@ -8,6 +8,8 @@ import { FetchUsersController } from './fetch_users/fetch_users.controller';
 import { FetchUsersService } from '../user/fetch_users/fetch_users.service';
 import { AddUserDataController } from './add_user_data/add_user_profile_data.controller';
 import { AddUserDataService } from './add_user_data/add_user_profile_data.service';
+import { FetchUserProfileController } from './fetch_user_profile/fetch_user_profile.controller';
+import { FetchUserProfileService } from './fetch_user_profile/fetch_user_profile.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -19,7 +21,13 @@ import { AddUserDataService } from './add_user_data/add_user_profile_data.servic
     UserProfileCreateController,
     FetchUsersController,
     AddUserDataController,
+    FetchUserProfileController,
   ],
-  providers: [UserProfileCreateService, FetchUsersService, AddUserDataService],
+  providers: [
+    UserProfileCreateService,
+    FetchUsersService,
+    AddUserDataService,
+    FetchUserProfileService,
+  ],
 })
 export class UserModule {}

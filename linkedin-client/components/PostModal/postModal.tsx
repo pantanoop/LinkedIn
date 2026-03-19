@@ -94,8 +94,14 @@ export default function PostModal({ open, onClose }: PostModalProps) {
 
       formData.append("userid", currentUser.userid);
       formData.append("userName", currentUser?.profileName ?? "Anonymous User");
-      formData.append("userTitle", "Software Engineer at Tech Corp");
-      formData.append("profileUrl", "https://i.pravatar.cc/150?img=12");
+      formData.append(
+        "userTitle",
+        currentUser.userTitle ?? "Software Engineer at Tech Corp",
+      );
+      formData.append(
+        "profileUrl",
+        currentUser.profileUrl ?? "https://i.pravatar.cc/150?img=12",
+      );
 
       formData.append("description", data.content);
       formData.append("postType", "post");
@@ -127,7 +133,11 @@ export default function PostModal({ open, onClose }: PostModalProps) {
         <div className="postModal">
           <div className="postHeader">
             <div className="userInfo">
-              <img src="/profile.jpg" alt="user" className="avatar" />
+              <img
+                src={currentUser?.profileUrl ?? ""}
+                alt="user"
+                className="avatar"
+              />
 
               <div>
                 <div className="username">Anoop Pant</div>

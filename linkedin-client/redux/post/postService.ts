@@ -1,5 +1,4 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL_POST;
-// const API_BASE_URL = `http://localhost:6000`;
 
 export const addUserPost = async (data: FormData) => {
   console.log("formdata in service", data);

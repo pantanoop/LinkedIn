@@ -23,8 +23,8 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useAppDispatch } from "../../../redux/hooks/hooks";
-import { completeProfileUser } from "../../../redux/auth/authSlice";
+import { useAppDispatch } from "../../redux/hooks/hooks";
+import { completeProfileUser } from "../../redux/auth/authSlice";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -102,9 +102,6 @@ export default function CompleteProfilePage({ onClose }: UpdateProfileProps) {
       await dispatch(completeProfileUser(formData)).unwrap();
       setSnackbar(true);
       if (onClose) onClose();
-      setTimeout(() => {
-        router.push("/feed");
-      }, 1000);
     } catch (error) {
       console.error("❌ SUBMIT ERROR:", error);
     }

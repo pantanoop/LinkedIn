@@ -7,6 +7,7 @@ import { RegisterUserController } from './register_user/register_user.controller
 import { JwtModule } from '@nestjs/jwt';
 import { LoginUserController } from './login_user/login_user.controller';
 import { LoginUserService } from './login_user/login_user.service';
+import { SignOutController } from './signout/signout.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { LoginUserService } from './login_user/login_user.service';
       secret: process.env.JWT_SECRET || 'supersecret',
     }),
   ],
-  controllers: [RegisterUserController, LoginUserController],
+  controllers: [RegisterUserController, LoginUserController, SignOutController],
   providers: [RegisterUserService, LoginUserService],
 })
 export class AuthModule {}

@@ -27,11 +27,15 @@ import WorkIcon from "@mui/icons-material/Work";
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { logout } from "../../redux/auth/authSlice";
 
 export default function Navbar() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const open = Boolean(anchorEl);
+  const dispatch = useAppDispatch();
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
 
   const handleOpen = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,7 +44,15 @@ export default function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  function handleSignOut() {
+    try {
+      dispatch(logout(currentUser.userid)).unwrap();
+      handleClose();
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  }
   return (
     <AppBar position="sticky" elevation={0} className="li-navbar">
       <Toolbar className="li-toolbar">
@@ -61,7 +73,7 @@ export default function Navbar() {
 
         <Box className="li-right">
           <div className="li-nav-item">
-            <IconButton size="small" onClick={() => router.push("/feed")}>
+            <IconButton size="small" onClick={() => router.push("/dashboard")}>
               <HomeIcon />
             </IconButton>
             <span>Home</span>
@@ -107,7 +119,10 @@ export default function Navbar() {
             style={{ cursor: "pointer" }}
             onClick={handleOpen}
           >
-            <Avatar sx={{ width: 28, height: 28 }} />
+            <Avatar
+              sx={{ width: 28, height: 28 }}
+              src={currentUser.profileUrl ?? ""}
+            />
             <ArrowDropDownIcon
               sx={{
                 fontSize: 20,
@@ -126,11 +141,16 @@ export default function Navbar() {
             PaperProps={{ className: "li-profile-menu" }}
           >
             <div className="li-menu-header">
-              <Avatar className="li-menu-avatar" />
+              <Avatar
+                className="li-menu-avatar"
+                src={currentUser.profileUrl ?? ""}
+              />
               <div>
-                <Typography className="li-menu-name">Anoop Pant</Typography>
+                <Typography className="li-menu-name">
+                  {currentUser.profileName}
+                </Typography>
                 <Typography className="li-menu-headline">
-                  Student at CCET
+                  {currentUser.userTitle}
                 </Typography>
               </div>
             </div>
@@ -217,14 +237,7 @@ export default function Navbar() {
 
             <Divider />
 
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                router.push("/auth/login");
-              }}
-            >
-              Sign out
-            </MenuItem>
+            <MenuItem onClick={() => handleSignOut()}>Sign out</MenuItem>
           </Menu>
         </Box>
       </Toolbar>

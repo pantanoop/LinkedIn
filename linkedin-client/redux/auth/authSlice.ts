@@ -12,6 +12,8 @@ import {
   getInvitations,
   getConnectionStatus,
   completeProfile,
+  fetchUserProfile,
+  logoutUser,
 } from "./authService";
 
 export type User = {
@@ -83,6 +85,17 @@ export const fetchConnectionStatus = createAsyncThunk(
   async (currentUserId: number, { rejectWithValue }) => {
     try {
       return await getConnectionStatus(currentUserId);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getUserProfile = createAsyncThunk(
+  "user/getUserProfile",
+  async (currentUserId: string, { rejectWithValue }) => {
+    try {
+      return await fetchUserProfile(currentUserId);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -201,14 +214,21 @@ export const toggleFollowUser = createAsyncThunk(
     }
   },
 );
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await logoutUser();
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 
 const authenticateSlice = createSlice({
   name: "authenticate",
   initialState,
   reducers: {
-    logout: (state) => {
-      state.currentUser = null;
-    },
     addCurrentUser: (state, action: PayloadAction<User>) => {
       state.currentUser = action.payload;
     },
@@ -406,9 +426,27 @@ const authenticateSlice = createSlice({
       .addCase(completeProfileUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(getUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+
+        if (action.payload) {
+          state.currentUser = action.payload;
+        } else {
+          state.currentUser = state.currentUser;
+        }
+      })
+      .addCase(getUserProfile.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.currentUser = null;
       });
   },
 });
 
-export const { addCurrentUser, logout, clearUsers } = authenticateSlice.actions;
+export const { addCurrentUser, clearUsers } = authenticateSlice.actions;
 export default authenticateSlice.reducer;

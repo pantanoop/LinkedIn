@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AddUserDataService } from './add_user_profile_data.service';
+import { postMediaMulterConfig } from '../../../infrastructure/multer/multer.config';
 
 @Controller('users/add/profile')
 export class AddUserDataController {
@@ -14,10 +15,13 @@ export class AddUserDataController {
 
   @Patch()
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'profilePicture', maxCount: 1 },
-      { name: 'coverPicture', maxCount: 1 },
-    ]),
+    FileFieldsInterceptor(
+      [
+        { name: 'profilePicture', maxCount: 1 },
+        { name: 'coverPicture', maxCount: 1 },
+      ],
+      postMediaMulterConfig,
+    ),
   )
   async completeProfile(
     @Body() data: any,

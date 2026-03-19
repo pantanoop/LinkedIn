@@ -1,5 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const API_URL = process.env.NEXT_PUBLIC_API_URL_USER;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const findUser = async (credentials: any) => {
   console.log(credentials);
@@ -171,6 +171,24 @@ export const getConnectionStatus = async (currentUserId: number) => {
   return res.json();
 };
 
+export const fetchUserProfile = async (currentUserId: string) => {
+  console.log(currentUserId, "in service get invi");
+  const res = await fetch(`${API_URL}/users/getprofile`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentUserId }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch invitations");
+  }
+
+  return res.json();
+};
+
 export const completeProfile = async (formData: FormData) => {
   const res = await fetch(`${API_URL}/users/add/profile`, {
     method: "PATCH",
@@ -180,6 +198,19 @@ export const completeProfile = async (formData: FormData) => {
 
   if (!res.ok) {
     throw new Error("Failed to complete profile");
+  }
+
+  return res.json();
+};
+
+export const logoutUser = async () => {
+  const res = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Logout failed");
   }
 
   return res.json();

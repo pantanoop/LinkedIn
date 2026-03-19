@@ -26,7 +26,10 @@ import { FcGoogle } from "react-icons/fc";
 import AppleIcon from "@mui/icons-material/Apple";
 import { auth, googleProvider } from "../../utility/firebase.config";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { signInWithFirebaseToken } from "../../../redux/auth/authSlice";
+import {
+  signInWithFirebaseToken,
+  getUserProfile,
+} from "../../../redux/auth/authSlice";
 const LoginSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z
@@ -69,7 +72,14 @@ export default function Login() {
         data.password,
       );
       const idToken = await res.user.getIdToken(true);
-      dispatch(signInWithFirebaseToken({ idToken })).unwrap();
+      await dispatch(signInWithFirebaseToken({ idToken })).unwrap();
+      if (!currentUser) return;
+      await dispatch(getUserProfile(currentUser?.userid));
+      if (currentUser.profileName) {
+        router.push("/dashboard");
+      } else {
+        router.push("/user");
+      }
     } catch (error: any) {
       let message = "Login Failed";
       if (error.code === "auth/user-not-found") {
@@ -94,7 +104,14 @@ export default function Login() {
       const res = await signInWithPopup(auth, provider);
       const idToken = await res.user.getIdToken(true);
       console.log("usr from google", res.user);
-      dispatch(signInWithFirebaseToken({ idToken })).unwrap();
+      await dispatch(signInWithFirebaseToken({ idToken })).unwrap();
+      if (!currentUser) return;
+      await dispatch(getUserProfile(currentUser?.userid));
+      if (currentUser.profileName) {
+        router.push("/dashboard");
+      } else {
+        router.push("/user");
+      }
     } catch (error) {
       if (auth.currentUser) {
         await auth.signOut();

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import NetworkLeftSidebar from "../../../components/network/LeftSideBar/LeftSideBar";
-import UserCard from "../../../components/network/UserCard/UserCard";
-import LinkedInNavbar from "../../../components/Navbar/navbar";
-import type { User } from "../../../redux/auth/authSlice";
+import NetworkLeftSidebar from "../../components/network/LeftSideBar/LeftSideBar";
+import UserCard from "../../components/network/UserCard/UserCard";
+import LinkedInNavbar from "../../components/Navbar/navbar";
+import type { User } from "../../redux/auth/authSlice";
 
 import "./network.css";
 

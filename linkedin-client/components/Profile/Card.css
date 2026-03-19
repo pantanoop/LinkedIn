@@ -1,0 +1,60 @@
+.card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.empty-card {
+  border: 2px dashed #b6d4fe;
+  background: #f8fbff;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  background: #eee;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.sub-text {
+  color: #666;
+  font-size: 14px;
+}
+
+.desc {
+  margin-top: 6px;
+  color: #555;
+}
+
+.skills-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}

@@ -17,6 +17,7 @@ export default function Home() {
   const [openPostModal, setOpenPostModal] = useState(false);
   const dispatch = useAppDispatch();
   const { posts, loading } = useAppSelector((state) => state.post);
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
   useEffect(() => {
     dispatch(clearPosts());
     dispatch(fetchPosts());
@@ -25,7 +26,7 @@ export default function Home() {
     <Box>
       <Paper elevation={1} className="start-post-card">
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar src="/profile.jpg" />
+          <Avatar src={currentUser.profileUrl ?? ""} />
           <PostModal
             open={openPostModal}
             onClose={() => setOpenPostModal(false)}
@@ -93,7 +94,7 @@ export default function Home() {
             postId={post.postId}
             author={post.userName}
             title={post.userTitle}
-            time="Just now"
+            time={post.postedOn}
             content={post.description}
             mediaUrls={post.mediaUrls}
             avatar={post.profileUrl}

@@ -8,7 +8,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import SendIcon from "@mui/icons-material/Send";
-
+import { timeAgo } from "../../app/utility/timeAgo";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { toggleLike, repost, fetchPosts } from "../../redux/post/postSlice";
 
@@ -124,7 +124,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="post-info">
           <h2 className="post-author">{author}</h2>
           <p className="post-title">{title}</p>
-          <p className="post-time">{time} • 🌍</p>
+          <p className="post-time">{timeAgo(time)}</p>
         </div>
       </div>
 

@@ -20,7 +20,8 @@ const CommentInput = ({ postId, parentId }: any) => {
         content: text,
         userId: currentUser.userid,
         userName: currentUser?.profileName ?? "Any User",
-        profileUrl: "https://i.pravatar.cc/150?img=12",
+        profileUrl:
+          currentUser.profileUrl ?? "https://i.pravatar.cc/150?img=12",
         parentId,
       }),
     );
@@ -29,7 +30,7 @@ const CommentInput = ({ postId, parentId }: any) => {
 
   return (
     <div className="comment-input-container">
-      <img className="comment-avatar" src="https://i.pravatar.cc/150?img=12" />
+      <img className="comment-avatar" src={currentUser?.profileUrl ?? ""} />
       <input
         className="comment-input-box"
         value={text}

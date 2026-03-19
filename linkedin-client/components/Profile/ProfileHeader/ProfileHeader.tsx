@@ -1,32 +1,23 @@
+"use client";
+
+import { useAppSelector } from "@/redux/hooks/hooks";
 import { Button, Avatar, Typography, Box } from "@mui/material";
 
 interface ProfileHeaderProps {
-  firstName?: string;
-  lastName?: string;
-  headline?: string;
-  about?: string;
-  profilePicture?: string;
-  coverPicture?: string;
   onAddSection: () => void;
 }
 
-export default function ProfileHeader({
-  firstName,
-  lastName,
-  headline,
-  about,
-  profilePicture,
-  coverPicture,
-  onAddSection,
-}: ProfileHeaderProps) {
-  const fullName = `${firstName ?? ""} ${lastName ?? ""}`.trim();
+export default function ProfileHeader({ onAddSection }: ProfileHeaderProps) {
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
 
   return (
     <div className="profile-header">
       <div
         className="cover"
         style={{
-          backgroundImage: coverPicture ? `url(${coverPicture})` : undefined,
+          backgroundImage: currentUser?.coverUrl
+            ? `url(${currentUser.coverUrl})`
+            : undefined,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -34,7 +25,7 @@ export default function ProfileHeader({
 
       <div className="profile-info">
         <Avatar
-          src={profilePicture}
+          src={currentUser?.profileUrl || ""}
           sx={{
             width: 120,
             height: 120,
@@ -44,17 +35,22 @@ export default function ProfileHeader({
             fontSize: "40px",
           }}
         >
-          {!profilePicture && fullName ? fullName.charAt(0).toUpperCase() : ""}
+          {!currentUser?.profileUrl && currentUser?.profileName
+            ? currentUser.profileName.charAt(0).toUpperCase()
+            : ""}
         </Avatar>
+
         <Typography variant="h5" fontWeight={600}>
-          {fullName || "Your Name"}
+          {currentUser?.profileName || "Your Name"}
         </Typography>
-        {headline && (
+
+        {currentUser?.userTitle && (
           <Typography variant="body1" sx={{ color: "text.secondary", mt: 0.5 }}>
-            {headline}
+            {currentUser.userTitle}
           </Typography>
         )}
-        {about && (
+
+        {currentUser?.about && (
           <Typography
             variant="body2"
             sx={{
@@ -63,10 +59,9 @@ export default function ProfileHeader({
               maxWidth: 600,
             }}
           >
-            {about}
+            {currentUser.about}
           </Typography>
         )}
-
         <Box className="profile-actions" sx={{ mt: 2 }}>
           <Button variant="contained">Open to</Button>
 
