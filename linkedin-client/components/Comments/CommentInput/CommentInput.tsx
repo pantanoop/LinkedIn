@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks/hooks";
 import { addComment } from "../../../redux/comments/commentSlice";
 import "./CommentInput.css";
+import { Avatar } from "@mui/material";
 
 const CommentInput = ({ postId, parentId }: any) => {
   const [text, setText] = useState("");
@@ -21,7 +22,8 @@ const CommentInput = ({ postId, parentId }: any) => {
         userId: currentUser.userid,
         userName: currentUser?.profileName ?? "Any User",
         profileUrl:
-          currentUser.profileUrl ?? "https://i.pravatar.cc/150?img=12",
+          currentUser.profileUrl ??
+          "https://ui-avatars.com/api/?name=User&background=E0E0E0&color=555&size=200",
         parentId,
       }),
     );
@@ -30,7 +32,12 @@ const CommentInput = ({ postId, parentId }: any) => {
 
   return (
     <div className="comment-input-container">
-      <img className="comment-avatar" src={currentUser?.profileUrl ?? ""} />
+      <Avatar
+        src={currentUser?.profileUrl ?? ""}
+        alt="user"
+        className="comment-avatar"
+      />
+
       <input
         className="comment-input-box"
         value={text}

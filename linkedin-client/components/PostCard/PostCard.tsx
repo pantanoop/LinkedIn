@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { toggleLike, repost, fetchPosts } from "../../redux/post/postSlice";
 
 import CommentSection from "../Comments/CommentSection/CommentSection";
+import { Avatar } from "@mui/material";
 
 type PostCardProps = {
   postId: string;
@@ -118,7 +119,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
       <div className="post-header">
         <div className="post-avatar">
-          {avatar && <img src={avatar} alt="avatar" />}
+          {avatar && <Avatar src={currentUser?.profileUrl ?? ""} alt="user" />}
         </div>
 
         <div className="post-info">

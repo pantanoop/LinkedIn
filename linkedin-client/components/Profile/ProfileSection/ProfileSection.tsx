@@ -8,7 +8,7 @@ import EducationCard from "../../Profile/Eductaion/EductaionCard/EducationCard";
 import SkillsCard from "../Skills/SkillCard/SkillCard";
 
 export default function ProfileSections({
-  education,
+  educations,
   experience,
   skills,
   onAddEducation,
@@ -29,7 +29,7 @@ export default function ProfileSections({
         onAddExperience={onAddExperience}
       />
 
-      <EducationCard education={education} onAddEducation={onAddEducation} />
+      <EducationCard education={educations} onAddEducation={onAddEducation} />
 
       <SkillsCard skills={skills} onAddSkills={onAddSkills} />
     </Box>

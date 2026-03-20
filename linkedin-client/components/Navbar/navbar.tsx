@@ -121,7 +121,7 @@ export default function Navbar() {
           >
             <Avatar
               sx={{ width: 28, height: 28 }}
-              src={currentUser.profileUrl ?? ""}
+              src={currentUser?.profileUrl ?? ""}
             />
             <ArrowDropDownIcon
               sx={{

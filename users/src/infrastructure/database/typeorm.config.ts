@@ -5,6 +5,7 @@ import { Connection } from '../../domain/entities/connection.entity';
 
 import * as dotenv from 'dotenv';
 import { join } from 'path';
+import { Education } from '../../domain/entities/education.entity';
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ export const typeOrmConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [User, Follow, Connection],
+  entities: [User, Follow, Connection, Education],
   migrations: [join(__dirname, 'migrations', '*.ts')],
   synchronize: false,
 };

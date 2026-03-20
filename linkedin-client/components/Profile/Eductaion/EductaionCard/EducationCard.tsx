@@ -4,7 +4,7 @@ import "../../Card.css";
 import { Typography, Button, IconButton, Paper, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-export default function EducationCard({ education, onAddEducation }: any) {
+export default function EducationCard({ educations, onAddEducation }: any) {
   return (
     <Paper className="card">
       <div className="card-header">
@@ -14,15 +14,21 @@ export default function EducationCard({ education, onAddEducation }: any) {
         </IconButton>
       </div>
 
-      {education.length === 0 ? (
+      {!educations || educations.length === 0 ? (
         <Button onClick={onAddEducation}>Add education</Button>
       ) : (
-        education.map((edu: any) => (
+        educations.map((edu: any) => (
           <Box key={edu.id} className="item">
-            <Typography className="title">{edu.schoolName}</Typography>
-            <Typography className="sub-text">{edu.degree}</Typography>
+            <Typography className="title">{edu.institutionName}</Typography>
             <Typography className="sub-text">
-              {edu.startDate} – {edu.endDate}
+              {edu.degree}
+              {edu.fieldOfStudy && ` • ${edu.fieldOfStudy}`}
+            </Typography>
+            <Typography className="sub-text"> 
+              {edu.startMonth} {edu.startYear} –{" "}
+              {edu.endMonth && edu.endYear
+                ? `${edu.endMonth} ${edu.endYear}`
+                : "Present"}
             </Typography>
           </Box>
         ))

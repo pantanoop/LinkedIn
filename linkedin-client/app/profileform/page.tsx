@@ -23,7 +23,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useAppDispatch } from "../../redux/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { completeProfileUser } from "../../redux/auth/authSlice";
 
 const profileSchema = z.object({
@@ -50,6 +50,7 @@ export default function CompleteProfilePage({ onClose }: UpdateProfileProps) {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
   const [snackbar, setSnackbar] = useState(false);
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
 
   const {
     control,
@@ -88,6 +89,7 @@ export default function CompleteProfilePage({ onClose }: UpdateProfileProps) {
     try {
       const formData = new FormData();
 
+      formData.append("currentUserId", currentUser.userid);
       formData.append("firstName", data.firstName);
       formData.append("lastName", data.lastName);
       formData.append("headline", data.headline || "");

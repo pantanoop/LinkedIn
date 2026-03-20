@@ -14,6 +14,8 @@ import {
   completeProfile,
   fetchUserProfile,
   logoutUser,
+  addEducation,
+  getEducationByUser,
 } from "./authService";
 
 export type User = {
@@ -225,6 +227,29 @@ export const logout = createAsyncThunk(
   },
 );
 
+export const addUserEducation = createAsyncThunk(
+  "education/add",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      console.log("slice edu data", data);
+      return await addEducation(data);
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
+export const fetchEducation = createAsyncThunk(
+  "education/fetch",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      return await getEducationByUser(userId);
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
 const authenticateSlice = createSlice({
   name: "authenticate",
   initialState,
@@ -300,6 +325,7 @@ const authenticateSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
+        console.log("user in slice ", action.payload);
         state.users = action.payload.data;
         state.total = action.payload.total;
         state.page = action.payload.page;

@@ -1,7 +1,7 @@
 "use client";
 
 import "./postModal.css";
-import { Dialog } from "@mui/material";
+import { Avatar, Dialog } from "@mui/material";
 import { useState } from "react";
 
 import PermMediaIcon from "@mui/icons-material/PermMedia";
@@ -133,7 +133,14 @@ export default function PostModal({ open, onClose }: PostModalProps) {
         <div className="postModal">
           <div className="postHeader">
             <div className="userInfo">
-              <img
+              {/* <img
+                src={
+                  currentUser?.profileUrl ?? "https://i.pravatar.cc/150?img=12"
+                }
+                alt="user"
+                className="avatar"
+              /> */}
+              <Avatar
                 src={currentUser?.profileUrl ?? ""}
                 alt="user"
                 className="avatar"

@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Follow } from './follow.entity';
 import { Connection } from './connection.entity';
+import { Education } from './education.entity';
 
 @Entity('Users')
 export class User {
@@ -48,4 +49,7 @@ export class User {
 
   @OneToMany(() => Connection, (conn) => conn.receiver)
   receivedConnections: Connection[];
+
+  @OneToMany(() => Education, (edu) => edu.user)
+  educations: Education[];
 }

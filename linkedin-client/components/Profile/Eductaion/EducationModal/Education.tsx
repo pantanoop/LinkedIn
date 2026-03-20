@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-
 import {
   Box,
   TextField,
@@ -13,6 +11,13 @@ import {
 } from "@mui/material";
 
 import "./Education.css";
+
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks/hooks";
+
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addUserEducation } from "@/redux/auth/authSlice";
 
 const months = [
   "January",
@@ -36,26 +41,59 @@ interface Props {
   onSuccess?: () => void;
 }
 
+const educationSchema = z.object({
+  institutionName: z.string().min(2, "institution name is required"),
+  degree: z.string().optional(),
+  fieldOfStudy: z.string().optional(),
+  startMonth: z.string().optional(),
+  startYear: z.string().optional(),
+  endMonth: z.string().optional(),
+  endYear: z.string().optional(),
+});
+
+type EducationFormData = z.infer<typeof educationSchema>;
+
 export default function EducationForm({ onClose, onSuccess }: Props) {
-  const [form, setForm] = useState({
-    schoolName: "",
-    degree: "",
-    fieldOfStudy: "",
-    startMonth: "",
-    startYear: "",
-    endMonth: "",
-    endYear: "",
+  console.log("✅ EducationForm RENDERED");
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
+  const dispatch = useAppDispatch();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EducationFormData>({
+    resolver: zodResolver(educationSchema),
+    defaultValues: {
+      institutionName: "",
+      degree: "",
+      fieldOfStudy: "",
+      startMonth: "",
+      startYear: "",
+      endMonth: "",
+      endYear: "",
+    },
   });
 
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const onSubmit = async (data: EducationFormData) => {
+    console.log("🚀 FINAL SUBMIT HIT", data);
 
-  const handleSubmit = () => {
-    console.log("Education Data:", form);
+    try {
+      const payload = {
+        ...data,
+        currentUserId: currentUser?.userid,
+      };
 
-    if (onSuccess) onSuccess();
-    if (onClose) onClose();
+      console.log(" in component PAYLOAD", payload);
+
+      await dispatch(addUserEducation(payload));
+
+      console.log("DISPATCH DONE");
+
+      if (onSuccess) onSuccess();
+      if (onClose) onClose();
+    } catch (err) {
+      console.error("ERROR IN SUBMIT", err);
+    }
   };
 
   return (
@@ -67,113 +105,166 @@ export default function EducationForm({ onClose, onSuccess }: Props) {
 
         <Typography className="edu-required">* Indicates required</Typography>
 
-        <TextField
-          label="School*"
-          name="schoolName"
-          fullWidth
-          margin="normal"
-          value={form.schoolName}
-          onChange={handleChange}
-          required
-        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* <form
+          onSubmit={handleSubmit(
+            (data) => {
+              console.log("🟢 RHF SUCCESS", data);
+            },
+            (errors) => {
+              console.log("🔴 RHF ERRORS", errors);
+            },
+          )}
+        > */}
+          <Controller
+            name="institutionName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="institution name*"
+                fullWidth
+                margin="normal"
+                error={!!errors.institutionName}
+                helperText={errors.institutionName?.message}
+              />
+            )}
+          />
+          <Controller
+            name="degree"
+            control={control}
+            render={({ field }) => (
+              <TextField {...field} label="Degree" fullWidth margin="normal" />
+            )}
+          />
+          <Controller
+            name="fieldOfStudy"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Field of study"
+                fullWidth
+                margin="normal"
+              />
+            )}
+          />
 
-        <TextField
-          label="Degree"
-          name="degree"
-          fullWidth
-          margin="normal"
-          value={form.degree}
-          onChange={handleChange}
-        />
+          <Typography className="edu-section">Start date</Typography>
 
-        <TextField
-          label="Field of study"
-          name="fieldOfStudy"
-          fullWidth
-          margin="normal"
-          value={form.fieldOfStudy}
-          onChange={handleChange}
-        />
+          <Box className="edu-row">
+            <Controller
+              name="startMonth"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  label="Month"
+                  {...field}
+                  fullWidth
+                  SelectProps={{
+                    MenuProps: {
+                      disablePortal: true,
+                    },
+                  }}
+                >
+                  {months.map((month) => (
+                    <MenuItem key={month} value={String(month)}>
+                      {month}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
 
-        <Typography className="edu-section">Start date</Typography>
+            <Controller
+              name="startYear"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  label="Year"
+                  {...field}
+                  fullWidth
+                  SelectProps={{
+                    MenuProps: {
+                      disablePortal: true,
+                    },
+                  }}
+                >
+                  {years.map((year) => (
+                    <MenuItem key={year} value={String(year)}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+          </Box>
+          <Typography className="edu-section">
+            End date (or expected)
+          </Typography>
 
-        <Box className="edu-row">
-          <TextField
-            select
-            label="Month"
-            name="startMonth"
-            value={form.startMonth}
-            onChange={handleChange}
-            fullWidth
-          >
-            {months.map((month) => (
-              <MenuItem key={month} value={month}>
-                {month}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Box className="edu-row">
+            <Controller
+              name="endMonth"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  label="Month"
+                  {...field}
+                  fullWidth
+                  SelectProps={{
+                    MenuProps: {
+                      disablePortal: true,
+                    },
+                  }}
+                >
+                  {months.map((month) => (
+                    <MenuItem key={month} value={String(month)}>
+                      {month}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+            <Controller
+              name="endYear"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  label="Year"
+                  {...field}
+                  fullWidth
+                  SelectProps={{
+                    MenuProps: {
+                      disablePortal: true,
+                    },
+                  }}
+                >
+                  {years.map((year) => (
+                    <MenuItem key={year} value={String(year)}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+          </Box>
+          <Box className="edu-actions">
+            <Button
+              type="submit"
+              variant="contained"
+              onClick={() => console.log(" BUTTON CLICKED")}
+            >
+              Save
+            </Button>
 
-          <TextField
-            select
-            label="Year"
-            name="startYear"
-            value={form.startYear}
-            onChange={handleChange}
-            fullWidth
-          >
-            {years.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-
-        <Typography className="edu-section">End date (or expected)</Typography>
-
-        <Box className="edu-row">
-          <TextField
-            select
-            label="Month"
-            name="endMonth"
-            value={form.endMonth}
-            onChange={handleChange}
-            fullWidth
-          >
-            {months.map((month) => (
-              <MenuItem key={month} value={month}>
-                {month}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            label="Year"
-            name="endYear"
-            value={form.endYear}
-            onChange={handleChange}
-            fullWidth
-          >
-            {years.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-
-        <Box className="edu-actions">
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={!form.schoolName}
-          >
-            Save
-          </Button>
-
-          <Button onClick={onClose}>Cancel</Button>
-        </Box>
+            <Button onClick={onClose}>Cancel</Button>
+          </Box>
+        </form>
       </Paper>
     </Box>
   );

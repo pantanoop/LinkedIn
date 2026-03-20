@@ -215,3 +215,46 @@ export const logoutUser = async () => {
 
   return res.json();
 };
+
+export const addEducation = async (data: any) => {
+  const res = await fetch(`${API_URL}/users/add/education`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to add education");
+  }
+
+  return res.json();
+};
+
+export const getEducationByUser = async (userId: string) => {
+  const res = await fetch(`${API_URL}/education/user/${userId}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch education");
+  }
+
+  return res.json();
+};
+
+export const deleteEducation = async (id: number) => {
+  const res = await fetch(`${API_BASE_URL}/education/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete education");
+  }
+
+  return res.json();
+};

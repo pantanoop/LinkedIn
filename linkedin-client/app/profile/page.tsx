@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./profile.css";
 
 import ProfileHeader from "@/components/Profile/ProfileHeader/ProfileHeader";
@@ -15,6 +15,8 @@ import SkillsForm from "../../components/Profile/Skills/SkillModal/Skills";
 
 import LinkedInNavbar from "@/components/Navbar/navbar";
 import CompleteProfilePage from "../profileform/page";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { fetchEducation } from "@/redux/auth/authSlice";
 
 export default function ProfilePage() {
   const [openUpdateProfile, setOpenUpdateProfile] = useState(false);
@@ -22,6 +24,17 @@ export default function ProfilePage() {
   const [openEducation, setOpenEducation] = useState(false);
   const [openExperience, setOpenExperience] = useState(false);
   const [openSkills, setOpenSkills] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const { currentUser } = useAppSelector((state: any) => state.authenticator);
+
+  const educations =
+    useAppSelector((state: any) => state.education?.educations) || [];
+  useEffect(() => {
+    if (currentUser?.userid) {
+      dispatch(fetchEducation(currentUser.userid));
+    }
+  }, [currentUser]);
 
   const isModalOpen =
     openMenu ||
@@ -67,7 +80,7 @@ export default function ProfilePage() {
         <ProfileHeader onAddSection={() => setOpenMenu(true)} />
 
         <ProfileSections
-          education={education}
+          educations={educations}
           experience={experience}
           skills={skills}
           onAddEducation={() => setOpenEducation(true)}
@@ -105,7 +118,15 @@ export default function ProfilePage() {
       {openEducation && (
         <div className="modal-wrapper" onClick={() => setOpenEducation(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <EducationForm onClose={() => setOpenEducation(false)} />
+            {/* <EducationForm onClose={() => setOpenEducation(false)} /> */}
+            <EducationForm
+              onClose={() => setOpenEducation(false)}
+              onSuccess={() => {
+                if (currentUser?.userid) {
+                  dispatch(fetchEducation(currentUser.id));
+                }
+              }}
+            />
           </div>
         </div>
       )}
