@@ -54,6 +54,26 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: post_db
 
+  messaging-service:
+    build:
+      context: ./messaging
+    container_name: messaging-service
+    restart: always
+    volumes:
+      - ./messaging:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: message_db
+
   user-service:
     build:
       context: ./users
