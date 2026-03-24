@@ -18,31 +18,29 @@ export default function LeftSidebar() {
         <div
           className="profile-cover"
           style={{
-            backgroundImage: `url('${currentUser.profileUrl ?? ""}')`,
+            backgroundImage: `url('${currentUser?.profileUrl ?? ""}')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             height: "6rem",
           }}
         ></div>
-        <Avatar src={currentUser.profileUrl ?? ""} className="profile-avatar" />
+        <Avatar
+          src={currentUser?.profileUrl ?? ""}
+          className="profile-avatar"
+        />
 
         <div className="profile-info">
           <Typography className="profile-name">
-            {currentUser.profileName}
+            {currentUser?.profileName}
           </Typography>
 
           <Typography className="profile-headline">
-            {currentUser.userTitle}
+            {currentUser?.userTitle}
           </Typography>
 
           <Typography className="profile-location">
-            {currentUser.about}
+            {currentUser?.about}
           </Typography>
-
-          {/* <div className="profile-company">
-            <div className="company-logo"></div>
-            <span>CCET</span>
-          </div> */}
         </div>
       </Paper>
 

@@ -25,8 +25,11 @@ export class Message {
   @Column()
   senderId: string;
 
-  @Column({ type: 'varchar', length: 500 })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   message: string;
+
+  @Column('text', { array: true, nullable: true })
+  mediaUrls: string[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -58,12 +58,13 @@ export class MessageGateway
     @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    const { senderId, receiverId, text } = data;
+    const { senderId, receiverId, text, mediaUrls } = data;
 
     const message = await this.sendMessageService.sendMessage(
       senderId,
       receiverId,
       text,
+      mediaUrls,
     );
     const receiverSocket = this.userToSocket.get(receiverId);
     if (receiverSocket) {

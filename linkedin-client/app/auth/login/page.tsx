@@ -103,11 +103,14 @@ export default function Login() {
     try {
       const res = await signInWithPopup(auth, provider);
       const idToken = await res.user.getIdToken(true);
-      console.log("usr from google", res.user);
-      await dispatch(signInWithFirebaseToken({ idToken })).unwrap();
+      const userRes = await dispatch(
+        signInWithFirebaseToken({ idToken }),
+      ).unwrap();
+      const userId = userRes.userid;
+      console.log("useri in login route to user", userId, userRes);
       if (!currentUser) return;
-      await dispatch(getUserProfile(currentUser?.userid));
-      if (currentUser.profileName) {
+      const profileRes = await dispatch(getUserProfile(userId)).unwrap();
+      if (profileRes?.profileName) {
         router.push("/dashboard");
       } else {
         router.push("/user");
@@ -115,7 +118,6 @@ export default function Login() {
     } catch (error) {
       if (auth.currentUser) {
         await auth.signOut();
-        console.log("Signed out due to backend failure");
       }
       console.error("Social Auth Error:", error);
     }
@@ -159,7 +161,6 @@ export default function Login() {
                 }}
                 startIcon={<AppleIcon sx={{ color: "black" }} />}
                 className="social-btn"
-                // onClick={() => handleSocialAuth(googleProvider)}
                 disabled={loading}
               >
                 {loading ? "Loading..." : "Sign in with Apple"}

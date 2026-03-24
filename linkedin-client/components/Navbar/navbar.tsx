@@ -143,14 +143,14 @@ export default function Navbar() {
             <div className="li-menu-header">
               <Avatar
                 className="li-menu-avatar"
-                src={currentUser.profileUrl ?? ""}
+                src={currentUser?.profileUrl ?? ""}
               />
               <div>
                 <Typography className="li-menu-name">
-                  {currentUser.profileName}
+                  {currentUser?.profileName}
                 </Typography>
                 <Typography className="li-menu-headline">
-                  {currentUser.userTitle}
+                  {currentUser?.userTitle}
                 </Typography>
               </div>
             </div>

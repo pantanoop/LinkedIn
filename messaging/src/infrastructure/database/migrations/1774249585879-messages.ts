@@ -32,7 +32,13 @@ export class MessageTable1774249585879 implements MigrationInterface {
             name: 'message',
             type: 'varchar',
             length: '500',
-            isNullable: false,
+            isNullable: true,
+          },
+          {
+            name: 'mediaUrls',
+            type: 'text',
+            isArray: true,
+            isNullable: true,
           },
           {
             name: 'createdAt',

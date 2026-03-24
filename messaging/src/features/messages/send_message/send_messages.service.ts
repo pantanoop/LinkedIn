@@ -17,23 +17,28 @@ export class SendMessageService {
     private readonly createConversationService: CreateConversationService,
   ) {}
 
-  async sendMessage(senderId: string, receiverId: string, text: string) {
+  async sendMessage(
+    senderId: string,
+    receiverId: string,
+    text: string,
+    mediaUrls: string[] = [],
+  ) {
     const conversation = await this.createConversationService.create_convo(
       senderId,
       receiverId,
     );
-
-    const message = await this.messageRepo.save({
-      conversationId: conversation.id,
+    const messageEntity = this.messageRepo.create({
+      conversation: { id: conversation.id },
       senderId,
-      message: text,
-    });
+      message: text || null,
+      mediaUrls: mediaUrls?.length ? mediaUrls : null,
+    } as Partial<Message>);
+    const message = await this.messageRepo.save(messageEntity);
 
     await this.conversationRepo.update(conversation.id, {
-      lastMessage: text,
+      lastMessage: text || (mediaUrls.length ? '📷 Media' : ''),
       lastMessageSenderId: senderId,
     });
-
     return {
       ...message,
       conversationId: conversation.id,

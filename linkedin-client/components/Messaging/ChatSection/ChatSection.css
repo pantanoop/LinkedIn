@@ -1,0 +1,140 @@
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+  min-height: 0; 
+}
+
+.chat-header {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.message-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-row.me {
+  align-items: flex-end;
+}
+
+.message-row.other {
+  align-items: flex-start;
+}
+
+.chat-image {
+  max-width: 220px;
+  border-radius: 12px;
+  margin-bottom: 5px;
+  margin:12px;
+}
+
+.message-bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 250px;
+  margin:12px;
+}
+
+.message-bubble.sent {
+  background: #0a66c2;
+  color: white;
+}
+
+.message-bubble.received {
+  background: #e4e6eb;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.chat-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+}
+
+.preview-container {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+}
+.preview-item {
+  position: relative;
+}
+
+.preview-item img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  background: black;
+  color: white;
+  border: none;
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+
+  font-size: 12px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.empty-chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 60px; /* above input */
+  left: 20px;
+  z-index: 1000;
+}
+
+.msg-time {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.7;
+  text-align: right;
+}
