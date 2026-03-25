@@ -26,7 +26,7 @@ export default function Home() {
     <Box>
       <Paper elevation={1} className="start-post-card">
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar src={currentUser.profileUrl ?? ""} />
+          <Avatar src={currentUser?.profileUrl ?? ""} />
           <PostModal
             open={openPostModal}
             onClose={() => setOpenPostModal(false)}
@@ -52,8 +52,13 @@ export default function Home() {
             spacing={1}
             className="post-action"
           >
-            <VideocamIcon className="video-icon" />
-            <Typography variant="body2">Video</Typography>
+            <VideocamIcon
+              className="video-icon"
+              onClick={() => setOpenPostModal(true)}
+            />
+            <Typography variant="body2" onClick={() => setOpenPostModal(true)}>
+              Video
+            </Typography>
           </Stack>
 
           <Stack
@@ -62,18 +67,27 @@ export default function Home() {
             spacing={1}
             className="post-action"
           >
-            <ImageIcon className="photo-icon" />
-            <Typography variant="body2">Photo</Typography>
+            <ImageIcon
+              className="photo-icon"
+              onClick={() => setOpenPostModal(true)}
+            />
+            <Typography variant="body2" onClick={() => setOpenPostModal(true)}>
+              Photo
+            </Typography>
           </Stack>
 
           <Stack
             direction="row"
             alignItems="center"
             spacing={1}
-            className="post-action"
           >
-            <ArticleIcon className="article-icon" />
-            <Typography variant="body2">Write article</Typography>
+            <ArticleIcon
+              className="article-icon"
+              onClick={() => setOpenPostModal(true)}
+            />
+            <Typography variant="body2" onClick={() => setOpenPostModal(true)}>
+              Write article
+            </Typography>
           </Stack>
         </Stack>
       </Paper>

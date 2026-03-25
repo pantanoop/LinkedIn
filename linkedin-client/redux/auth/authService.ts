@@ -2,7 +2,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const findUser = async (credentials: any) => {
-  console.log(credentials);
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
@@ -49,7 +48,6 @@ export const userProfile = async (profileData: any) => {
 };
 
 export const SocialSignIn = async (credentials: any) => {
-  console.log(credentials, "api login");
   const response = await fetch(`${API_BASE_URL}/auth/login/google`, {
     method: "POST",
     headers: {
@@ -128,6 +126,8 @@ export const acceptConnection = async (data: any) => {
     body: JSON.stringify(data),
   });
 
+  const json = await res.json();
+
   if (!res.ok) {
     throw new Error("Failed to accept connection");
   }
@@ -136,7 +136,6 @@ export const acceptConnection = async (data: any) => {
 };
 
 export const getInvitations = async (currentUserId: number) => {
-  console.log(currentUserId, "in service get invi");
   const res = await fetch(`${API_URL}/connections/invitations`, {
     method: "POST",
     credentials: "include",
@@ -154,7 +153,6 @@ export const getInvitations = async (currentUserId: number) => {
 };
 
 export const getConnectionStatus = async (currentUserId: number) => {
-  console.log(currentUserId, "in service get invi");
   const res = await fetch(`${API_URL}/connections/status`, {
     method: "POST",
     credentials: "include",
@@ -171,15 +169,14 @@ export const getConnectionStatus = async (currentUserId: number) => {
   return res.json();
 };
 
-export const fetchUserProfile = async (currentUserId: string) => {
-  console.log(currentUserId, "in service get invi");
+export const fetchUserProfile = async (userId: string) => {
   const res = await fetch(`${API_URL}/users/getprofile`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ currentUserId }),
+    body: JSON.stringify({ userId }),
   });
 
   if (!res.ok) {

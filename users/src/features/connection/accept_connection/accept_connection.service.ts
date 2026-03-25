@@ -53,7 +53,6 @@ export class AcceptConnectionService {
       await manager.increment(User, { id: requesterId }, 'connectionsCount', 1);
       await manager.increment(User, { id: receiverId }, 'connectionsCount', 1);
 
-      // ✅ fetch updated values
       const [updatedRequester, updatedReceiver] = await Promise.all([
         manager.findOne(User, { where: { id: requesterId } }),
         manager.findOne(User, { where: { id: receiverId } }),

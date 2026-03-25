@@ -50,7 +50,6 @@ export default function Login() {
     (state) => state.authenticator,
   );
 
-  console.log(currentUser, "CURRENT USER");
   const {
     control,
     handleSubmit,
@@ -107,8 +106,6 @@ export default function Login() {
         signInWithFirebaseToken({ idToken }),
       ).unwrap();
       const userId = userRes.userid;
-      console.log("useri in login route to user", userId, userRes);
-      if (!currentUser) return;
       const profileRes = await dispatch(getUserProfile(userId)).unwrap();
       if (profileRes?.profileName) {
         router.push("/dashboard");
@@ -119,7 +116,6 @@ export default function Login() {
       if (auth.currentUser) {
         await auth.signOut();
       }
-      console.error("Social Auth Error:", error);
     }
   };
   return (

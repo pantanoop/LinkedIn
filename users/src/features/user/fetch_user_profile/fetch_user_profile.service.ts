@@ -15,7 +15,7 @@ export class FetchUserProfileService {
       where: { userid: userId },
     });
     if (!user) {
-      return null;
+      return {};
     }
     return user;
   }

@@ -119,7 +119,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
       <div className="post-header">
         <div className="post-avatar">
-          {avatar && <Avatar src={currentUser?.profileUrl ?? ""} alt="user" />}
+          {avatar && <Avatar src={avatar ?? ""} alt="user" />}
         </div>
 
         <div className="post-info">

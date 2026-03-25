@@ -100,7 +100,6 @@ export default function CompleteProfilePage({ onClose }: UpdateProfileProps) {
       if (coverFile) {
         formData.append("coverPicture", coverFile);
       }
-      console.log("🚀 FRONTEND SUBMIT:", Object.fromEntries(formData));
       await dispatch(completeProfileUser(formData)).unwrap();
       setSnackbar(true);
       if (onClose) onClose();

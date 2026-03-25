@@ -14,6 +14,7 @@ import {
   clearUsers,
   fetchInvitations,
   fetchConnectionStatus,
+  getUserProfile,
 } from "@/redux/auth/authSlice";
 
 import Card from "@/components/network/Card/Card";
@@ -25,6 +26,11 @@ export default function MyNetworkPage() {
   const { currentUser, users, invitations, limit } = useAppSelector(
     (state: any) => state.authenticator,
   );
+  useEffect(() => {
+    dispatch(getUserProfile(currentUser.userid));
+  }, [users]);
+
+  useEffect(() => {}, [currentUser]);
 
   useEffect(() => {
     if (!currentUser?.id) return;

@@ -231,7 +231,6 @@ export const addUserEducation = createAsyncThunk(
   "education/add",
   async (data: any, { rejectWithValue }) => {
     try {
-      console.log("slice edu data", data);
       return await addEducation(data);
     } catch (err: any) {
       return rejectWithValue(err.message);
@@ -325,7 +324,6 @@ const authenticateSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("user in slice ", action.payload);
         state.users = action.payload.data;
         state.total = action.payload.total;
         state.page = action.payload.page;
@@ -458,11 +456,10 @@ const authenticateSlice = createSlice({
       })
       .addCase(getUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-
-        if (action.payload) {
-          state.currentUser = action.payload;
-        } else {
+        if (!action.payload || Object.keys(action.payload).length === 0) {
           state.currentUser = state.currentUser;
+        } else {
+          state.currentUser = action.payload;
         }
       })
       .addCase(getUserProfile.rejected, (state) => {

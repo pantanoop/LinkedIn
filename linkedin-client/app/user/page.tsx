@@ -34,16 +34,15 @@ export default function CompleteProfile() {
   const { currentUser, loading } = useAppSelector(
     (state: any) => state.authenticator,
   );
-
   useEffect(() => {
-    if (currentUser.profileUrl) {
+    if (!currentUser) return;
+
+    if (currentUser.profileName) {
       router.push("/dashboard");
     } else {
       router.push("/user");
     }
-    if (!currentUser) router.push("/auth/login");
-  }, [currentUser, router]);
-  console.log(currentUser, "currentUser in profile page");
+  }, [currentUser]);
 
   const {
     control,
