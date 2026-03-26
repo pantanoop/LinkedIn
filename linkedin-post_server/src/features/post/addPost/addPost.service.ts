@@ -10,11 +10,9 @@ export class AddPostService {
     private readonly postRepo: Repository<Post>,
   ) {}
 
-  async addPost(data: any, files: Express.Multer.File[]) {
-    const { userid, description, userName, profileUrl, userTitle } = data;
-    const mediaUrls =
-      files?.map((file) => `http://localhost:3001/uploads/${file.filename}`) ||
-      [];
+  async addPost(data: any) {
+    const { userid, description, userName, profileUrl, userTitle, mediaUrls } =
+      data;
 
     const newPost = await this.postRepo.create({
       postId: uuidv4(),

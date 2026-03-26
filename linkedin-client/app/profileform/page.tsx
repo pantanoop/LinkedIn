@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { completeProfileUser } from "../../redux/auth/authSlice";
+import { uploadToCloudinary } from "../../app/utility/cloudinary";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -87,20 +88,27 @@ export default function CompleteProfilePage({ onClose }: UpdateProfileProps) {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      const formData = new FormData();
-
-      formData.append("currentUserId", currentUser.userid);
-      formData.append("firstName", data.firstName);
-      formData.append("lastName", data.lastName);
-      formData.append("headline", data.headline || "");
-      formData.append("about", data.about || "");
+      let profileUrl = "";
+      let coverUrl = "";
       if (profileFile) {
-        formData.append("profilePicture", profileFile);
+        const res = await uploadToCloudinary([profileFile]);
+        profileUrl = res[0];
       }
       if (coverFile) {
-        formData.append("coverPicture", coverFile);
+        const res = await uploadToCloudinary([coverFile]);
+        coverUrl = res[0];
       }
-      await dispatch(completeProfileUser(formData)).unwrap();
+      console.log("cover url , profile url ", profileUrl, coverUrl);
+      const profileData = {
+        currentUserId: currentUser.userid,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        headline: data.headline || "",
+        about: data.about || "",
+        profileUrl: profileUrl || "",
+        coverUrl: coverUrl || "",
+      };
+      await dispatch(completeProfileUser(profileData)).unwrap();
       setSnackbar(true);
       if (onClose) onClose();
     } catch (error) {

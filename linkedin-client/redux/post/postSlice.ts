@@ -44,10 +44,10 @@ const initialState: PostState = {
 
 export const addPost = createAsyncThunk(
   "user/posts/add",
-  async (data: FormData, { rejectWithValue }) => {
+  async (postData: any, { rejectWithValue }) => {
     try {
-      console.log("formdata in thunk", data);
-      return await addUserPost(data);
+      console.log("formdata in thunk", postData);
+      return await addUserPost(postData);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

@@ -10,14 +10,16 @@ export class AddUserDataService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async completeProfile(
-    data: any,
-    files?: {
-      profilePicture?: Express.Multer.File[];
-      coverPicture?: Express.Multer.File[];
-    },
-  ) {
-    const { currentUserId, firstName, lastName, headline, about } = data;
+  async completeProfile(data: any) {
+    const {
+      currentUserId,
+      firstName,
+      lastName,
+      headline,
+      about,
+      profileUrl,
+      coverUrl,
+    } = data;
     const user = await this.userRepo.findOne({
       where: { userid: currentUserId },
     });
@@ -27,17 +29,10 @@ export class AddUserDataService {
     }
 
     user.profileName = `${firstName} ${lastName}`;
-
     user.userTitle = headline || '';
     user.about = about || '';
-
-    if (files?.profilePicture?.[0]) {
-      user.profileUrl = `http://localhost:3002/uploads/${files.profilePicture[0].filename}`;
-    }
-
-    if (files?.coverPicture?.[0]) {
-      user.coverUrl = `http://localhost:3002/uploads/${files.coverPicture[0].filename}`;
-    }
+    user.profileUrl = profileUrl || '';
+    user.coverUrl = coverUrl || '';
 
     const savedUser = await this.userRepo.save(user);
     return {

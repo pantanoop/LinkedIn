@@ -128,9 +128,9 @@ export const acceptConnectionUser = createAsyncThunk(
 
 export const completeProfileUser = createAsyncThunk(
   "user/completeProfile",
-  async (formData: FormData, { rejectWithValue }) => {
+  async (profileData: any, { rejectWithValue }) => {
     try {
-      return await completeProfile(formData);
+      return await completeProfile(profileData);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

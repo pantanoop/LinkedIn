@@ -186,11 +186,14 @@ export const fetchUserProfile = async (userId: string) => {
   return res.json();
 };
 
-export const completeProfile = async (formData: FormData) => {
+export const completeProfile = async (profileData: any) => {
   const res = await fetch(`${API_URL}/users/add/profile`, {
     method: "PATCH",
     credentials: "include",
-    body: formData,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(profileData),
   });
 
   if (!res.ok) {

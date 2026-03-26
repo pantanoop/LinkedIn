@@ -1,11 +1,14 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL_POST;
 
-export const addUserPost = async (data: FormData) => {
-  console.log("formdata in service", data);
+export const addUserPost = async (postData: any) => {
+  console.log("formdata in service", postData);
   const res = await fetch(`${API_BASE_URL}/posts/add`, {
     method: "POST",
     credentials: "include",
-    body: data,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(postData),
   });
 
   return res.json();

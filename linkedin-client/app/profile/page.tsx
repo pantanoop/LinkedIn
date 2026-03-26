@@ -28,14 +28,6 @@ export default function ProfilePage() {
 
   const { currentUser } = useAppSelector((state: any) => state.authenticator);
 
-  const educations =
-    useAppSelector((state: any) => state.education?.educations) || [];
-  useEffect(() => {
-    if (currentUser?.userid) {
-      dispatch(fetchEducation(currentUser.userid));
-    }
-  }, [currentUser]);
-
   const isModalOpen =
     openMenu ||
     openEducation ||

@@ -1,7 +1,7 @@
 "use client";
 
 import "./postModal.css";
-import { Avatar, Dialog } from "@mui/material";
+import { Alert, Avatar, Dialog, Snackbar } from "@mui/material";
 import { useState } from "react";
 
 import PermMediaIcon from "@mui/icons-material/PermMedia";
@@ -13,6 +13,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import { uploadToCloudinary } from "../../app/utility/cloudinary";
 
 import EmojiPicker from "emoji-picker-react";
 
@@ -41,11 +42,13 @@ type PostFormData = z.infer<typeof PostSchema>;
 export default function PostModal({ open, onClose }: PostModalProps) {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.authenticator);
+  const { loading } = useAppSelector((state: any) => state.post);
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
   const [openEmoji, setOpenEmoji] = useState(false);
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const {
     control,
     handleSubmit,
@@ -88,34 +91,30 @@ export default function PostModal({ open, onClose }: PostModalProps) {
   const handlePost = async (data: PostFormData) => {
     if (!currentUser) return;
     console.log(currentUser.userid);
+
     try {
-      console.log("post hitted in component");
-      const formData = new FormData();
+      setUploading(true);
+      setOpenSnackbar(true);
 
-      formData.append("userid", currentUser.userid);
-      formData.append("userName", currentUser?.profileName ?? "Anonymous User");
-      formData.append(
-        "userTitle",
-        currentUser.userTitle ?? "Software Engineer at Tech Corp",
-      );
-      formData.append(
-        "profileUrl",
-        currentUser.profileUrl ?? "https://i.pravatar.cc/150?img=12",
-      );
-
-      formData.append("description", data.content);
-      formData.append("postType", "post");
-
-      selectedMedia.forEach((file) => {
-        formData.append("files", file);
-      });
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
+      let mediaUrls: string[] = [];
+      if (selectedMedia.length > 0) {
+        mediaUrls = await uploadToCloudinary(selectedMedia);
       }
-      console.log("formdata in com", formData);
-      await dispatch(addPost(formData)).unwrap();
+      const postData = {
+        userid: currentUser.userid,
+        userName: currentUser?.profileName ?? "Anonymous User",
+        userTitle: currentUser.userTitle ?? "Software Engineer at Tech Corp",
+        profileUrl:
+          currentUser.profileUrl ?? "https://i.pravatar.cc/150?img=12",
 
-      handleClose();
+        description: data.content,
+        mediaUrls,
+      };
+      await dispatch(addPost(postData)).unwrap();
+      setTimeout(() => {
+        handleClose();
+      }, 1200);
+      setUploading(false);
     } catch (error) {
       console.error("Post creation failed", error);
     }
@@ -133,13 +132,6 @@ export default function PostModal({ open, onClose }: PostModalProps) {
         <div className="postModal">
           <div className="postHeader">
             <div className="userInfo">
-              {/* <img
-                src={
-                  currentUser?.profileUrl ?? "https://i.pravatar.cc/150?img=12"
-                }
-                alt="user"
-                className="avatar"
-              /> */}
               <Avatar
                 src={currentUser?.profileUrl ?? ""}
                 alt="user"
@@ -179,12 +171,29 @@ export default function PostModal({ open, onClose }: PostModalProps) {
             <div className="image-preview">
               {previewUrls.map((url, i) => {
                 const file = selectedMedia[i];
+                return (
+                  <div key={i} className="preview-item">
+                    {file.type.startsWith("video") ? (
+                      <video src={url} controls width="100%" />
+                    ) : (
+                      <img src={url} alt="preview" />
+                    )}
 
-                if (file.type.startsWith("video")) {
-                  return <video key={i} src={url} controls width="100%" />;
-                }
-
-                return <img key={i} src={url} alt="preview" />;
+                    <button
+                      className="remove-btn"
+                      onClick={() => {
+                        setSelectedMedia((prev) =>
+                          prev.filter((_, index) => index !== i),
+                        );
+                        setPreviewUrls((prev) =>
+                          prev.filter((_, index) => index !== i),
+                        );
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
               })}
             </div>
           )}
@@ -257,13 +266,21 @@ export default function PostModal({ open, onClose }: PostModalProps) {
                 className="postBtn"
                 type="button"
                 onClick={handleSubmit(handlePost)}
+                disabled={loading || uploading}
               >
-                Post
+                {loading || uploading ? "Posting..." : "Post"}
               </button>
             </div>
           </div>
         </div>
       </div>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2500}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert severity="success">Success! Redirecting...</Alert>
+      </Snackbar>
     </Dialog>
   );
 }
